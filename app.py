@@ -2002,93 +2002,43 @@ def demand_csv():
 # ALERT CSV REPORT
 # ============================================================
 
-@app.route("/reports/alerts.csv")
-def alerts_csv():
+
+@app.route("/api/alerts-summary")
+def alerts_summary_api():
 
     if not officer_required():
-
-        return redirect(
-            url_for("login")
-        )
+        return jsonify({"error": "Unauthorized"}), 401
 
     conn = get_db()
 
-    alerts_data = conn.execute(
+    total_alerts = conn.execute(
+        "SELECT COUNT(*) FROM ai_alerts"
+    ).fetchone()[0]
 
-        """
-        SELECT
-            id,
-            alert_type,
-            message,
-            severity,
-            status,
-            created_at
-        FROM ai_alerts
-        ORDER BY id DESC
-        """
+    total_complaints = conn.execute(
+        "SELECT COUNT(*) FROM complaints"
+    ).fetchone()[0]
 
-    ).fetchall()
+    pending_complaints = conn.execute(
+        "SELECT COUNT(*) FROM complaints WHERE status = 'Pending'"
+    ).fetchone()[0]
+
+    resolved_complaints = conn.execute(
+        """
+        SELECT COUNT(*)
+        FROM complaints
+        WHERE status IN ('Resolved', 'Closed')
+        """
+    ).fetchone()[0]
 
     conn.close()
 
-    rows = []
-
-    for alert in alerts_data:
-
-        rows.append({
-
-            "id":
-                alert["id"],
-
-            "alert_type":
-                alert["alert_type"],
-
-            "message":
-                alert["message"],
-
-            "severity":
-                alert["severity"],
-
-            "status":
-                alert["status"],
-
-            "created_at":
-                alert["created_at"]
-
-        })
-
-    report_df = pd.DataFrame(rows)
-
-    if report_df.empty:
-
-        csv_data = (
-            "id,alert_type,message,"
-            "severity,status,created_at\n"
-        )
-
-    else:
-
-        csv_data = report_df.to_csv(
-            index=False
-        )
-
-    return Response(
-
-        csv_data,
-
-        mimetype="text/csv",
-
-        headers={
-
-            "Content-Disposition":
-                "attachment; "
-                "filename=alerts_report.csv"
-
-        }
-
-    )
-
-
+    return jsonify({
+        "total_alerts": total_alerts,
+        "total_complaints": total_complaints,
+        "pending_complaints": pending_complaints,
+        "resolved_complaints": resolved_complaints
+    })
 # ============================================================
 # COMPLAINT CSV REPORT
 # ============================================================
@@ -2197,57 +2147,8 @@ def logout():
         url_for("login")
     )
 
-# ============================================================
-# REPORT SUMMARY API
-# ============================================================
 
-@app.route("/api/alerts-summary")
-def alerts_summary_api():
 
-    if not officer_required():
-
-        return jsonify({
-            "error": "Unauthorized"
-        }), 401
-
-    conn = get_db()
-
-    total_alerts = conn.execute(
-        """
-        SELECT COUNT(*)
-        FROM ai_alerts
-        """
-    ).fetchone()[0]
-
-    total_complaints = conn.execute(
-        """
-        SELECT COUNT(*)
-        FROM complaints
-        """
-    ).fetchone()[0]
-
-    pending_complaints = conn.execute(
-        """
-        SELECT COUNT(*)
-        FROM complaints
-        WHERE status = 'Pending'
-        """
-    ).fetchone()[0]
-
-    conn.close()
-
-    return jsonify({
-
-        "total_alerts":
-            total_alerts,
-
-        "total_complaints":
-            total_complaints,
-
-        "pending_complaints":
-            pending_complaints
-
-    })
 # ============================================================
 # 404 ERROR
 # ============================================================

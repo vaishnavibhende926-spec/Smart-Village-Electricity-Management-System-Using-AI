@@ -4,3 +4,9 @@ __pycache__/
 users.db 
 data/raw/CEEW - Smart meter data Bareilly 2020 (1).csv 
 data/raw/data set.csv/data set.csv 
+
+# Large machine learning models
+models/*.pkl
+
+# Large machine learning models
+models/*.pkl
