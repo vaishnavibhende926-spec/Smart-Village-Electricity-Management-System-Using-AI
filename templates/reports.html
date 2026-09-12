@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Reports | Smart Village Electricity</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background: #102a43;
+    color: white;
+    padding: 25px 15px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.logo-sub {
+    text-align: center;
+    font-size: 12px;
+    color: #bcccdc;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.nav-link {
+    display: block;
+    text-decoration: none;
+    color: #d9e2ec;
+    padding: 13px 15px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.nav-link:hover {
+    background: #243b53;
+    color: white;
+}
+
+.nav-link.active {
+    background: #1976d2;
+    color: white;
+}
+
+/* ================= MAIN ================= */
+
+.main {
+    margin-left: 250px;
+    min-height: 100vh;
+}
+
+.topbar {
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.topbar h2 {
+    margin: 0;
+}
+
+.officer {
+    color: #52606d;
+    font-size: 14px;
+}
+
+/* ================= CONTENT ================= */
+
+.content {
+    padding: 30px;
+}
+
+.page-title {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.page-description {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+/* ================= SUMMARY CARDS ================= */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+
+.card-title {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+.card-value {
+    font-size: 27px;
+    font-weight: bold;
+    color: #102a43;
+}
+
+/* ================= REPORT GRID ================= */
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.report-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+
+.report-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.report-title {
+    font-size: 19px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.report-description {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 11px 18px;
+    background: #1976d2;
+    color: white;
+    text-decoration: none;
+    border-radius: 7px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+
+.download-btn:hover {
+    background: #125ea8;
+}
+
+/* ================= PREVIEW ================= */
+
+.preview {
+    margin-top: 25px;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+
+.preview-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.report-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.info-box {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.info-label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.info-value {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* ================= NOTE ================= */
+
+.note {
+    margin-top: 25px;
+    padding: 18px;
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    border-radius: 8px;
+    color: #7c2d12;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width: 1000px) {
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .report-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 700px) {
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .report-info {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        Smart Village
+    </div>
+
+    <div class="logo-sub">
+        Electricity Management
+    </div>
+
+    <a href="/officer"
+       class="nav-link">
+        📊 Dashboard
+    </a>
+
+    <a href="/analytics"
+       class="nav-link">
+        📈 Analytics
+    </a>
+
+    <a href="/forecasting"
+       class="nav-link">
+        🔮 Load Forecasting
+    </a>
+
+    <a href="/abnormal"
+       class="nav-link">
+        ⚠️ Abnormal Detection
+    </a>
+
+    <a href="/alerts"
+       class="nav-link">
+        🚨 Alerts
+    </a>
+
+    <a href="/reports"
+       class="nav-link active">
+        📄 Reports
+    </a>
+
+    <a href="/profile"
+       class="nav-link">
+        👤 My Profile
+    </a>
+
+    <a href="/logout"
+       class="nav-link">
+        🚪 Logout
+    </a>
+
+</div>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="main">
+
+
+    <div class="topbar">
+
+        <h2>
+            Reports
+        </h2>
+
+        <div class="officer">
+
+            Officer:
+            {{ user["name"] }}
+
+        </div>
+
+    </div>
+
+
+    <div class="content">
+
+
+        <h1 class="page-title">
+            Electricity Management Reports
+        </h1>
+
+
+        <p class="page-description">
+
+            Generate and download reports related to
+            electricity demand, AI alerts and citizen
+            complaints.
+
+        </p>
+
+
+        <!-- ================= SUMMARY ================= -->
+
+        <div class="cards">
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Total Demand Readings
+                </div>
+
+                <div class="card-value"
+                     id="demandCount">
+
+                    Loading...
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    AI Alerts
+                </div>
+
+                <div class="card-value"
+                     id="alertCount">
+
+                    Loading...
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Total Complaints
+                </div>
+
+                <div class="card-value"
+                     id="complaintCount">
+
+                    Loading...
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Pending Complaints
+                </div>
+
+                <div class="card-value"
+                     id="pendingCount">
+
+                    Loading...
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================= REPORTS ================= -->
+
+        <div class="report-grid">
+
+
+            <!-- DEMAND REPORT -->
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    ⚡
+                </div>
+
+                <div class="report-title">
+                    Electricity Demand Report
+                </div>
+
+                <div class="report-description">
+
+                    Contains electricity demand readings
+                    with date and time information from
+                    the available demand dataset.
+
+                </div>
+
+                <a href="/reports/demand.csv"
+                   class="download-btn">
+
+                    ⬇ Download Demand CSV
+
+                </a>
+
+            </div>
+
+
+            <!-- ALERT REPORT -->
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    🚨
+                </div>
+
+                <div class="report-title">
+                    AI Alert Report
+                </div>
+
+                <div class="report-description">
+
+                    Contains AI-generated abnormal
+                    consumption alerts, severity and
+                    current alert status.
+
+                </div>
+
+                <a href="/reports/alerts.csv"
+                   class="download-btn">
+
+                    ⬇ Download Alerts CSV
+
+                </a>
+
+            </div>
+
+
+            <!-- COMPLAINT REPORT -->
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    📝
+                </div>
+
+                <div class="report-title">
+                    Complaint Report
+                </div>
+
+                <div class="report-description">
+
+                    Contains complaints submitted by
+                    registered users and their current
+                    resolution status.
+
+                </div>
+
+                <a href="/reports/complaints.csv"
+                   class="download-btn">
+
+                    ⬇ Download Complaints CSV
+
+                </a>
+
+            </div>
+
+
+            <!-- FORECAST REPORT -->
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    🔮
+                </div>
+
+                <div class="report-title">
+                    Load Forecasting Report
+                </div>
+
+                <div class="report-description">
+
+                    Use the Load Forecasting module to
+                    generate AI-based demand predictions
+                    for selected date and time parameters.
+
+                </div>
+
+                <a href="/forecasting"
+                   class="download-btn">
+
+                    Open Forecasting
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================= REPORT PREVIEW ================= -->
+
+        <div class="preview">
+
+
+            <div class="preview-title">
+
+                Report Information
+
+            </div>
+
+
+            <div class="report-info">
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Project
+                    </div>
+
+                    <div class="info-value">
+                        Smart Village Electricity
+                        Management System
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Technology
+                    </div>
+
+                    <div class="info-value">
+                        Python + Flask + AI/ML
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Demand Dataset
+                    </div>
+
+                    <div class="info-value">
+                        5-minute electricity demand data
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        AI Models
+                    </div>
+
+                    <div class="info-value">
+                        Random Forest
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================= NOTE ================= -->
+
+        <div class="note">
+
+            <strong>Important:</strong>
+
+            These reports are part of the academic
+            prototype. Electricity demand values are
+            derived from the available dataset and should
+            not be interpreted as official MSEDCL billing
+            records. AI abnormal-consumption alerts
+            indicate risk patterns and require field
+            verification.
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* ============================================================
+   LOAD REPORT SUMMARY
+============================================================ */
+
+async function loadReportSummary() {
+
+    try {
+
+        /* ---------------------------------------------
+           DEMAND
+        --------------------------------------------- */
+
+        const demandResponse =
+            await fetch("/api/demand");
+
+        const demandData =
+            await demandResponse.json();
+
+
+        document.getElementById(
+            "demandCount"
+        ).textContent =
+            demandData.length;
+
+
+        /* ---------------------------------------------
+           ALERTS
+        --------------------------------------------- */
+
+        const alertResponse =
+            await fetch("/api/alerts-summary");
+
+
+        if (alertResponse.ok) {
+
+            const alertData =
+                await alertResponse.json();
+
+
+            document.getElementById(
+                "alertCount"
+            ).textContent =
+                alertData.total_alerts;
+
+
+            document.getElementById(
+                "complaintCount"
+            ).textContent =
+                alertData.total_complaints;
+
+
+            document.getElementById(
+                "pendingCount"
+            ).textContent =
+                alertData.pending_complaints;
+
+        }
+        else {
+
+            document.getElementById(
+                "alertCount"
+            ).textContent =
+                "0";
+
+            document.getElementById(
+                "complaintCount"
+            ).textContent =
+                "0";
+
+            document.getElementById(
+                "pendingCount"
+            ).textContent =
+                "0";
+
+        }
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Report summary error:",
+            error
+        );
+
+    }
+
+}
+
+
+loadReportSummary();
+
+
+</script>
+
+
+</body>
+
+</html>

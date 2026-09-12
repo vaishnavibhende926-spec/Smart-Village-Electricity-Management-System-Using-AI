@@ -1,0 +1,999 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Analytics | Smart Village</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f9;
+            color: #263238;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #073b4c;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .logo p {
+            margin: 7px 0 0;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .officer-badge {
+            background: rgba(255,255,255,0.12);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px 15px;
+            margin: 6px 0;
+            border-radius: 9px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #0b7285;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e4e4e4;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 30px;
+        }
+
+        .topbar h3 {
+            margin: 0;
+        }
+
+        .officer-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout {
+            background: #e63946;
+            color: white;
+            padding: 9px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px;
+        }
+
+        .heading h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .heading p {
+            color: #777;
+            margin-top: 8px;
+            margin-bottom: 25px;
+        }
+
+        /* STAT CARDS */
+
+        .stats {
+            display: grid;
+            grid-template-columns:
+                repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card-title {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .card-value {
+            font-size: 27px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .card-sub {
+            margin-top: 8px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* PANELS */
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+        }
+
+        .chart-container {
+            height: 330px;
+        }
+
+        /* WEATHER */
+
+        .weather-card {
+            background: #f3fafb;
+            border-left: 5px solid #0b7285;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .weather-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 7px;
+        }
+
+        .weather-label {
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* TABLE */
+
+        .table-panel {
+            margin-top: 25px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        th {
+            background: #f7f9fa;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #fafcfc;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 1100px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width: 850px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>⚡ Smart Village</h2>
+
+            <p>Electricity Management</p>
+
+        </div>
+
+
+        <div class="officer-badge">
+
+            👮 Officer Panel
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="{{ url_for('officer_dashboard') }}">
+
+                📊 Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('analytics') }}"
+               class="active">
+
+                📈 Analytics
+
+            </a>
+
+
+            <a href="{{ url_for('forecasting') }}">
+
+                🔮 Load Forecasting
+
+            </a>
+
+
+            <a href="{{ url_for('abnormal') }}">
+
+                ⚠️ Abnormal Detection
+
+            </a>
+
+
+            <a href="{{ url_for('alerts') }}">
+
+                🚨 Alerts
+
+            </a>
+
+
+            <a href="{{ url_for('reports') }}">
+
+                📄 Reports
+
+            </a>
+
+
+            <a href="{{ url_for('logout') }}">
+
+                🚪 Logout
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <h3>
+                Electricity Analytics
+            </h3>
+
+
+            <div class="officer-info">
+
+                <span>
+
+                    👮
+                    {{ session.get("name", "Officer") }}
+
+                </span>
+
+
+                <a class="logout"
+                   href="{{ url_for('logout') }}">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <div class="heading">
+
+                <h1>
+                    📈 Electricity Analytics
+                </h1>
+
+                <p>
+                    Analyze electricity demand patterns
+                    from the available real-world dataset.
+                </p>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats">
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        Current Demand
+                    </div>
+
+                    <div class="card-value"
+                         id="currentDemand">
+
+                        ---
+
+                    </div>
+
+                    <div class="card-sub">
+                        Latest available reading
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        Average Demand
+                    </div>
+
+                    <div class="card-value"
+                         id="averageDemand">
+
+                        ---
+
+                    </div>
+
+                    <div class="card-sub">
+                        Selected readings
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        Peak Demand
+                    </div>
+
+                    <div class="card-value"
+                         id="maximumDemand">
+
+                        ---
+
+                    </div>
+
+                    <div class="card-sub">
+                        Highest reading
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        Minimum Demand
+                    </div>
+
+                    <div class="card-value"
+                         id="minimumDemand">
+
+                        ---
+
+                    </div>
+
+                    <div class="card-sub">
+                        Lowest reading
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- CHART + WEATHER -->
+
+            <div class="grid">
+
+
+                <!-- DEMAND CHART -->
+
+                <div class="panel">
+
+                    <h2>
+                        📊 Demand Trend
+                    </h2>
+
+                    <div class="chart-container">
+
+                        <canvas id="demandChart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+                <!-- WEATHER -->
+
+                <div class="panel">
+
+                    <h2>
+                        🌡️ Latest Weather
+                    </h2>
+
+
+                    <div class="weather-card">
+
+                        <div class="weather-label">
+                            Temperature
+                        </div>
+
+                        <div class="weather-value"
+                             id="temperature">
+
+                            ---
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weather-card">
+
+                        <div class="weather-label">
+                            Humidity
+                        </div>
+
+                        <div class="weather-value"
+                             id="humidity">
+
+                            ---
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weather-card">
+
+                        <div class="weather-label">
+                            Wind Speed
+                        </div>
+
+                        <div class="weather-value"
+                             id="windSpeed">
+
+                            ---
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weather-card">
+
+                        <div class="weather-label">
+                            Pressure
+                        </div>
+
+                        <div class="weather-value"
+                             id="pressure">
+
+                            ---
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- RECENT DATA -->
+
+            <div class="panel table-panel">
+
+                <h2>
+                    📋 Recent Electricity Readings
+                </h2>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Date & Time
+                                </th>
+
+                                <th>
+                                    Demand
+                                </th>
+
+                                <th>
+                                    Temperature
+                                </th>
+
+                                <th>
+                                    Humidity
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="dataTable">
+
+                            <tr>
+
+                                <td colspan="4">
+                                    Loading data...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <footer>
+
+            Smart Village Electricity Management System
+            <br>
+
+            AI-Based Electricity Monitoring &
+            Decision Support
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+
+async function loadAnalytics() {
+
+    try {
+
+        const response =
+            await fetch(
+                "{{ url_for('demand_api') }}"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data || data.length === 0) {
+
+            console.log("No data available.");
+
+            return;
+
+        }
+
+
+        /* --------------------------------
+           DEMAND VALUES
+        -------------------------------- */
+
+        const values =
+            data.map(
+                item => Number(item.demand)
+            );
+
+
+        const labels =
+            data.map(
+                item => item.datetime
+            );
+
+
+        const current =
+            values[values.length - 1];
+
+
+        const average =
+            values.reduce(
+                (sum, value) =>
+                    sum + value,
+                0
+            ) / values.length;
+
+
+        const maximum =
+            Math.max(...values);
+
+
+        const minimum =
+            Math.min(...values);
+
+
+        document.getElementById(
+            "currentDemand"
+        ).innerText =
+            current.toFixed(2);
+
+
+        document.getElementById(
+            "averageDemand"
+        ).innerText =
+            average.toFixed(2);
+
+
+        document.getElementById(
+            "maximumDemand"
+        ).innerText =
+            maximum.toFixed(2);
+
+
+        document.getElementById(
+            "minimumDemand"
+        ).innerText =
+            minimum.toFixed(2);
+
+
+        /* --------------------------------
+           CHART
+        -------------------------------- */
+
+        new Chart(
+
+            document.getElementById(
+                "demandChart"
+            ),
+
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Electricity Demand",
+
+                            data: values,
+
+                            tension: 0.3,
+
+                            fill: true
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    interaction: {
+
+                        mode: "index",
+
+                        intersect: false
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: false,
+
+                            title: {
+
+                                display: true,
+
+                                text:
+                                    "Demand"
+
+                            }
+
+                        },
+
+                        x: {
+
+                            title: {
+
+                                display: true,
+
+                                text:
+                                    "Date & Time"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+        /* --------------------------------
+           LATEST WEATHER
+        -------------------------------- */
+
+        const latest =
+            data[data.length - 1];
+
+
+        document.getElementById(
+            "temperature"
+        ).innerText =
+            latest.temperature !== undefined
+            ? Number(latest.temperature).toFixed(2)
+            : "N/A";
+
+
+        document.getElementById(
+            "humidity"
+        ).innerText =
+            latest.humidity !== undefined
+            ? Number(latest.humidity).toFixed(2) + " %"
+            : "N/A";
+
+
+        document.getElementById(
+            "windSpeed"
+        ).innerText =
+            latest.wind_speed !== undefined
+            ? Number(latest.wind_speed).toFixed(2)
+            : "N/A";
+
+
+        document.getElementById(
+            "pressure"
+        ).innerText =
+            latest.pressure !== undefined
+            ? Number(latest.pressure).toFixed(2)
+            : "N/A";
+
+
+        /* --------------------------------
+           TABLE
+        -------------------------------- */
+
+        const table =
+            document.getElementById(
+                "dataTable"
+            );
+
+
+        table.innerHTML = "";
+
+
+        const recent =
+            data.slice(-10).reverse();
+
+
+        recent.forEach(
+            item => {
+
+                const row =
+                    document.createElement("tr");
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${item.datetime}
+                    </td>
+
+                    <td>
+                        ${Number(item.demand).toFixed(2)}
+                    </td>
+
+                    <td>
+                        ${
+                            item.temperature !== undefined
+                            ? Number(item.temperature).toFixed(2)
+                            : "N/A"
+                        }
+                    </td>
+
+                    <td>
+                        ${
+                            item.humidity !== undefined
+                            ? Number(item.humidity).toFixed(2)
+                            : "N/A"
+                        }
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            }
+        );
+
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Analytics error:",
+            error
+        );
+
+    }
+
+}
+
+
+loadAnalytics();
+
+
+</script>
+
+
+</body>
+
+</html>
+```

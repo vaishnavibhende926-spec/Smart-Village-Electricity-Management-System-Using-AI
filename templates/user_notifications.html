@@ -1,0 +1,562 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Notifications | Smart Village</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f9;
+            color: #263238;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #073b4c;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .logo p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px 16px;
+            margin: 7px 0;
+            border-radius: 10px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #0b7285;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .topbar h3 {
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout {
+            background: #e63946;
+            color: white;
+            text-decoration: none;
+            padding: 9px 15px;
+            border-radius: 7px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px;
+        }
+
+        .heading h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .heading p {
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        /* NOTIFICATION CARD */
+
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .notification {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.06);
+            border-left: 5px solid #0b7285;
+        }
+
+        .notification.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .notification.success {
+            border-left-color: #16a34a;
+        }
+
+        .notification.danger {
+            border-left-color: #dc2626;
+        }
+
+        .notification.info {
+            border-left-color: #2563eb;
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e6f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+            flex-shrink: 0;
+        }
+
+        .notification.warning .notification-icon {
+            background: #fff4d6;
+        }
+
+        .notification.success .notification-icon {
+            background: #e7f7ec;
+        }
+
+        .notification.danger .notification-icon {
+            background: #feecec;
+        }
+
+        .notification.info .notification-icon {
+            background: #eaf1ff;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content h3 {
+            margin: 0 0 7px;
+            font-size: 17px;
+        }
+
+        .notification-content p {
+            margin: 0;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .date {
+            margin-top: 8px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .badge {
+            background: #0b7285;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+        }
+
+        .empty {
+            background: white;
+            padding: 50px;
+            text-align: center;
+            border-radius: 15px;
+            color: #777;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        /* MOBILE */
+
+        @media(max-width: 700px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .notification {
+                padding: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>⚡ Smart Village</h2>
+
+            <p>Electricity Management</p>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="{{ url_for('user_dashboard') }}">
+                🏠 Dashboard
+            </a>
+
+            <a href="{{ url_for('user_consumption') }}">
+                ⚡ My Consumption
+            </a>
+
+            <a href="{{ url_for('user_bill') }}">
+                💳 Electricity Bill
+            </a>
+
+            <a href="{{ url_for('user_notifications') }}"
+               class="active">
+
+                🔔 Notifications
+
+            </a>
+
+            <a href="{{ url_for('profile') }}">
+                👤 My Profile
+            </a>
+
+            <a href="{{ url_for('user_help') }}">
+                🆘 Help & Support
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                🚪 Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <h3>
+                Notifications
+            </h3>
+
+            <div class="user-info">
+
+                <span>
+                    👤 {{ session.get("name", "User") }}
+                </span>
+
+                <a class="logout"
+                   href="{{ url_for('logout') }}">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <div class="heading">
+
+                <h1>
+                    🔔 Notifications
+                </h1>
+
+                <p>
+                    Important electricity updates,
+                    alerts and service information.
+                </p>
+
+            </div>
+
+
+            <!-- NOTIFICATIONS -->
+
+            <div class="notification-list">
+
+
+                <!-- BILL -->
+
+                <div class="notification warning">
+
+                    <div class="notification-icon">
+                        💳
+                    </div>
+
+                    <div class="notification-content">
+
+                        <h3>
+                            Electricity Bill Reminder
+                            <span class="badge">
+                                BILL
+                            </span>
+                        </h3>
+
+                        <p>
+                            Your electricity bill is
+                            approaching its due date.
+                            Please check your bill
+                            details to avoid late payment.
+                        </p>
+
+                        <div class="date">
+                            Today
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONSUMPTION -->
+
+                <div class="notification info">
+
+                    <div class="notification-icon">
+                        📊
+                    </div>
+
+                    <div class="notification-content">
+
+                        <h3>
+                            Consumption Update
+                            <span class="badge">
+                                INFO
+                            </span>
+                        </h3>
+
+                        <p>
+                            Your recent electricity
+                            consumption data has been
+                            updated successfully.
+                        </p>
+
+                        <div class="date">
+                            Today
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NORMAL -->
+
+                <div class="notification success">
+
+                    <div class="notification-icon">
+                        ✅
+                    </div>
+
+                    <div class="notification-content">
+
+                        <h3>
+                            System Status Normal
+                            <span class="badge">
+                                SYSTEM
+                            </span>
+                        </h3>
+
+                        <p>
+                            The electricity monitoring
+                            system is currently online
+                            and operating normally.
+                        </p>
+
+                        <div class="date">
+                            Yesterday
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HIGH USAGE -->
+
+                <div class="notification warning">
+
+                    <div class="notification-icon">
+                        ⚠️
+                    </div>
+
+                    <div class="notification-content">
+
+                        <h3>
+                            High Consumption Alert
+                            <span class="badge">
+                                ALERT
+                            </span>
+                        </h3>
+
+                        <p>
+                            A higher-than-usual electricity
+                            consumption pattern was observed.
+                            Please review your consumption.
+                        </p>
+
+                        <div class="date">
+                            2 days ago
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MAINTENANCE -->
+
+                <div class="notification info">
+
+                    <div class="notification-icon">
+                        🔧
+                    </div>
+
+                    <div class="notification-content">
+
+                        <h3>
+                            Scheduled Maintenance
+                            <span class="badge">
+                                NOTICE
+                            </span>
+                        </h3>
+
+                        <p>
+                            Scheduled maintenance may
+                            temporarily affect electricity
+                            services in some areas.
+                        </p>
+
+                        <div class="date">
+                            3 days ago
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <footer>
+
+            Smart Village Electricity Management System
+            <br>
+
+            AI-Based Electricity Monitoring & Decision Support
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>
+```

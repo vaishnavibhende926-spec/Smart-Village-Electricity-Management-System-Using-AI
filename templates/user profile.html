@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>My Profile</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/user.css') }}">
+
+</head>
+
+<body>
+
+
+<div class="sidebar">
+
+    <div class="brand">
+        ⚡ Smart Village
+    </div>
+
+    <div class="brand-subtitle">
+        Electricity Management
+    </div>
+
+    <a href="{{ url_for('user_dashboard') }}">
+        🏠 Dashboard
+    </a>
+
+    <a href="{{ url_for('user_consumption') }}">
+        ⚡ My Consumption
+    </a>
+
+    <a href="{{ url_for('user_bill') }}">
+        💳 Electricity Bill
+    </a>
+
+    <a href="{{ url_for('user_notifications') }}">
+        🔔 Notifications
+    </a>
+
+    <a href="{{ url_for('profile') }}"
+       class="active">
+        👤 My Profile
+    </a>
+
+    <a href="{{ url_for('user_help') }}">
+        🆘 Help & Support
+    </a>
+
+    <a href="{{ url_for('logout') }}"
+       class="logout-side">
+        🚪 Logout
+    </a>
+
+</div>
+
+
+<div class="main">
+
+
+    <div class="topbar">
+
+        <div>
+
+            <h2>
+                My Profile
+            </h2>
+
+            <div class="welcome-text">
+                Account information
+            </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+            <span class="user-email">
+                {{ session.get('email') }}
+            </span>
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-btn">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Personal Information
+        </h2>
+
+
+        <table class="data-table">
+
+            <tr>
+
+                <th>
+                    Field
+                </th>
+
+                <th>
+                    Information
+                </th>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Name
+                </td>
+
+                <td>
+                    {{ session.get('name') }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Gmail
+                </td>
+
+                <td>
+                    {{ session.get('email') }}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Account Type
+                </td>
+
+                <td>
+                    User
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Login Status
+                </td>
+
+                <td>
+                    Active
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Account Security
+        </h2>
+
+        <p>
+            Your password is stored as a
+            password hash in the application
+            database rather than as plain text.
+        </p>
+
+        <br>
+
+        <a href="{{ url_for('logout') }}"
+           class="primary-btn">
+
+            Logout Securely
+
+        </a>
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

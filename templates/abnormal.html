@@ -1,0 +1,689 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Abnormal Detection | Smart Village</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7f9;
+    color: #263238;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: #073b4c;
+    color: white;
+    padding: 25px 15px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo h2 {
+    margin: 0;
+}
+
+.logo p {
+    font-size: 13px;
+    opacity: .8;
+}
+
+.officer-badge {
+    background: rgba(255,255,255,.12);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 13px 15px;
+    margin: 6px 0;
+    border-radius: 9px;
+}
+
+.menu a:hover,
+.menu a.active {
+    background: #0b7285;
+}
+
+.main {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+.topbar {
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 30px;
+}
+
+.officer-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logout {
+    background: #e63946;
+    color: white;
+    text-decoration: none;
+    padding: 9px 15px;
+    border-radius: 7px;
+}
+
+.content {
+    padding: 30px;
+}
+
+.heading h1 {
+    margin: 0;
+}
+
+.heading p {
+    color: #777;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.panel {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.06);
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d5dfe2;
+    border-radius: 8px;
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #0b7285;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #073b4c;
+}
+
+.result {
+    text-align: center;
+    padding: 30px;
+    background: #f7f9fa;
+    border-radius: 12px;
+}
+
+.result-icon {
+    font-size: 55px;
+}
+
+.result-title {
+    color: #777;
+    margin-top: 10px;
+}
+
+.result-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 15px;
+}
+
+.normal {
+    color: #16803c;
+}
+
+.abnormal {
+    color: #d62828;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 20px;
+    background: #e8f7ed;
+    color: #16803c;
+}
+
+.warning {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff4e5;
+    border-left: 5px solid #f4a261;
+    border-radius: 8px;
+    color: #76531c;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+@media(max-width: 850px) {
+
+    .sidebar {
+        width: 200px;
+    }
+
+    .main {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+<aside class="sidebar">
+
+<div class="logo">
+
+<h2>⚡ Smart Village</h2>
+
+<p>Electricity Management</p>
+
+</div>
+
+<div class="officer-badge">
+
+👮 Officer Panel
+
+</div>
+
+<nav class="menu">
+
+<a href="{{ url_for('officer_dashboard') }}">
+📊 Dashboard
+</a>
+
+<a href="{{ url_for('analytics') }}">
+📈 Analytics
+</a>
+
+<a href="{{ url_for('forecasting') }}">
+🔮 Load Forecasting
+</a>
+
+<a href="{{ url_for('abnormal') }}"
+   class="active">
+⚠️ Abnormal Detection
+</a>
+
+<a href="{{ url_for('alerts') }}">
+🚨 Alerts
+</a>
+
+<a href="{{ url_for('reports') }}">
+📄 Reports
+</a>
+
+<a href="{{ url_for('logout') }}">
+🚪 Logout
+</a>
+
+</nav>
+
+</aside>
+
+
+<main class="main">
+
+
+<header class="topbar">
+
+<h3>
+Abnormal Consumption Detection
+</h3>
+
+<div class="officer-info">
+
+<span>
+👮 {{ session.get("name", "Officer") }}
+</span>
+
+<a class="logout"
+   href="{{ url_for('logout') }}">
+Logout
+</a>
+
+</div>
+
+</header>
+
+
+<section class="content">
+
+
+<div class="heading">
+
+<h1>
+⚠️ Abnormal Consumption Detection
+</h1>
+
+<p>
+Use the trained AI model to identify abnormal
+electricity-consumption patterns.
+</p>
+
+</div>
+
+
+<div class="grid">
+
+
+<!-- INPUT -->
+
+<div class="panel">
+
+<h2>
+📊 Consumption Information
+</h2>
+
+<form id="abnormalForm">
+
+
+<div class="form-group">
+
+<label>
+Mean Consumption
+</label>
+
+<input
+type="number"
+step="any"
+id="mean_consumption"
+value="1.5"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Maximum Consumption
+</label>
+
+<input
+type="number"
+step="any"
+id="max_consumption"
+value="4.2"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Minimum Consumption
+</label>
+
+<input
+type="number"
+step="any"
+id="min_consumption"
+value="0.1"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Standard Deviation
+</label>
+
+<input
+type="number"
+step="any"
+id="std_consumption"
+value="0.8"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Total Consumption
+</label>
+
+<input
+type="number"
+step="any"
+id="total_consumption"
+value="1500"
+required>
+
+</div>
+
+
+<button type="submit">
+
+🤖 Analyze Consumption
+
+</button>
+
+</form>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div class="panel">
+
+<h2>
+🤖 AI Analysis Result
+</h2>
+
+
+<div class="result">
+
+<div class="result-icon"
+     id="resultIcon">
+
+⚡
+
+</div>
+
+
+<div class="result-title">
+
+Prediction
+
+</div>
+
+
+<div class="result-value"
+     id="resultValue">
+
+Waiting for input
+
+</div>
+
+
+<div class="badge"
+     id="riskBadge">
+
+Model Ready
+
+</div>
+
+</div>
+
+
+<div class="warning">
+
+<strong>Important:</strong>
+
+<br><br>
+
+An AI abnormal-consumption prediction does
+not prove electricity theft. It identifies a
+pattern that may require further investigation
+by authorized electricity personnel.
+
+</div>
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+<footer>
+
+Smart Village Electricity Management System
+<br>
+AI-Based Electricity Monitoring & Decision Support
+
+</footer>
+
+
+</main>
+
+</div>
+
+
+<script>
+
+document
+.getElementById("abnormalForm")
+.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const resultValue =
+        document.getElementById("resultValue");
+
+    const riskBadge =
+        document.getElementById("riskBadge");
+
+    const resultIcon =
+        document.getElementById("resultIcon");
+
+
+    resultValue.innerText =
+        "Analyzing...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "{{ url_for('abnormal_api') }}",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        mean_consumption:
+                            Number(
+                                document.getElementById(
+                                    "mean_consumption"
+                                ).value
+                            ),
+
+                        max_consumption:
+                            Number(
+                                document.getElementById(
+                                    "max_consumption"
+                                ).value
+                            ),
+
+                        min_consumption:
+                            Number(
+                                document.getElementById(
+                                    "min_consumption"
+                                ).value
+                            ),
+
+                        std_consumption:
+                            Number(
+                                document.getElementById(
+                                    "std_consumption"
+                                ).value
+                            ),
+
+                        total_consumption:
+                            Number(
+                                document.getElementById(
+                                    "total_consumption"
+                                ).value
+                            )
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Prediction failed"
+            );
+
+        }
+
+
+        if (data.prediction === 1) {
+
+            resultIcon.innerText = "⚠️";
+
+            resultValue.innerText =
+                "Abnormal Consumption Detected";
+
+            resultValue.className =
+                "result-value abnormal";
+
+            riskBadge.innerText =
+                "⚠️ High Risk";
+
+            riskBadge.style.background =
+                "#fde8e8";
+
+            riskBadge.style.color =
+                "#b42318";
+
+        }
+
+        else {
+
+            resultIcon.innerText = "✅";
+
+            resultValue.innerText =
+                "Normal Consumption";
+
+            resultValue.className =
+                "result-value normal";
+
+            riskBadge.innerText =
+                "✓ Low Risk";
+
+            riskBadge.style.background =
+                "#e8f7ed";
+
+            riskBadge.style.color =
+                "#16803c";
+
+        }
+
+    }
+
+    catch(error) {
+
+        resultValue.innerText =
+            "Error";
+
+        riskBadge.innerText =
+            error.message;
+
+        resultIcon.innerText =
+            "❌";
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
+```

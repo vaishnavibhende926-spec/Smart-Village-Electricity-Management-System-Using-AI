@@ -1,0 +1,6 @@
+venv/ 
+__pycache__/ 
+*.pyc 
+users.db 
+data/raw/CEEW - Smart meter data Bareilly 2020 (1).csv 
+data/raw/data set.csv/data set.csv 

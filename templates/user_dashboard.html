@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Village - User Dashboard</title>
+
+    <!-- USER CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/user.css') }}">
+
+    <!-- CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<div class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            ⚡
+        </div>
+
+        <h2>Smart Village</h2>
+
+        <p>Electricity Management</p>
+
+    </div>
+
+
+    <nav class="sidebar-menu">
+
+        <a href="{{ url_for('user_dashboard') }}"
+           class="active">
+            🏠
+            <span>Dashboard</span>
+        </a>
+
+
+        <a href="{{ url_for('user_consumption') }}">
+            ⚡
+            <span>My Consumption</span>
+        </a>
+
+
+        <a href="{{ url_for('user_bill') }}">
+            💳
+            <span>Electricity Bill</span>
+        </a>
+
+
+        <a href="{{ url_for('user_notifications') }}">
+            🔔
+            <span>Notifications</span>
+        </a>
+
+
+        <a href="{{ url_for('profile') }}">
+            👤
+            <span>My Profile</span>
+        </a>
+
+
+        <a href="{{ url_for('user_help') }}">
+            🆘
+            <span>Help & Support</span>
+        </a>
+
+
+        <a href="{{ url_for('logout') }}"
+           class="logout-link">
+            🚪
+            <span>Logout</span>
+        </a>
+
+    </nav>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<div class="main-content">
+
+
+    <!-- =================================================
+         TOP BAR
+    ================================================== -->
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>User Dashboard</h1>
+
+            <p>
+                Monitor your electricity information
+            </p>
+
+        </div>
+
+
+        <div class="user-info">
+
+            <div class="user-avatar">
+                {{ session.get("name", "User")[0]|upper }}
+            </div>
+
+            <div class="user-details">
+
+                <strong>
+                    {{ session.get("name", "User") }}
+                </strong>
+
+                <span>
+                    {{ session.get("email", "") }}
+                </span>
+
+            </div>
+
+
+            <a href="{{ url_for('logout') }}"
+               class="top-logout">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         WELCOME CARD
+    ================================================== -->
+
+    <div class="welcome-card">
+
+        <div>
+
+            <p class="welcome-small">
+                Welcome back
+            </p>
+
+            <h2>
+                Welcome to Smart Village Electricity
+            </h2>
+
+            <p>
+                Monitor your electricity information,
+                view consumption patterns, check
+                notifications and access electricity
+                services from your personal dashboard.
+            </p>
+
+        </div>
+
+
+        <div class="welcome-icon">
+            ⚡
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         STAT CARDS
+    ================================================== -->
+
+    <div class="stats-grid">
+
+
+        <!-- CURRENT -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon current-icon">
+                ⚡
+            </div>
+
+            <div>
+
+                <p>
+                    Current Demand
+                </p>
+
+                <h2 id="currentDemand">
+                    Loading...
+                </h2>
+
+                <span>
+                    Latest available reading
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- AVERAGE -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon average-icon">
+                📊
+            </div>
+
+            <div>
+
+                <p>
+                    Average Demand
+                </p>
+
+                <h2 id="averageDemand">
+                    Loading...
+                </h2>
+
+                <span>
+                    Recent average
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAXIMUM -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon maximum-icon">
+                📈
+            </div>
+
+            <div>
+
+                <p>
+                    Maximum Demand
+                </p>
+
+                <h2 id="maximumDemand">
+                    Loading...
+                </h2>
+
+                <span>
+                    Recent maximum
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon status-icon">
+                🟢
+            </div>
+
+            <div>
+
+                <p>
+                    System Status
+                </p>
+
+                <h2 class="online">
+                    Online
+                </h2>
+
+                <span>
+                    Service available
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ELECTRICITY DEMAND CHART
+    ================================================== -->
+
+    <div class="chart-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    Electricity Demand Overview
+                </h2>
+
+                <p>
+                    Latest electricity demand readings
+                    connected to the system.
+                </p>
+
+            </div>
+
+            <div class="chart-badge">
+                Live Data
+            </div>
+
+        </div>
+
+
+        <div class="chart-container">
+
+            <canvas id="demandChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         QUICK SERVICES
+    ================================================== -->
+
+    <div class="section-title">
+
+        <h2>
+            Quick Services
+        </h2>
+
+        <p>
+            Access your electricity services quickly.
+        </p>
+
+    </div>
+
+
+    <div class="services-grid">
+
+
+        <!-- CONSUMPTION -->
+
+        <a href="{{ url_for('user_consumption') }}"
+           class="service-card">
+
+            <div class="service-icon">
+                ⚡
+            </div>
+
+            <h3>
+                My Consumption
+            </h3>
+
+            <p>
+                View electricity demand and
+                consumption information.
+            </p>
+
+            <span class="service-link">
+                View Details →
+            </span>
+
+        </a>
+
+
+        <!-- BILL -->
+
+        <a href="{{ url_for('user_bill') }}"
+           class="service-card">
+
+            <div class="service-icon">
+                💳
+            </div>
+
+            <h3>
+                Electricity Bill
+            </h3>
+
+            <p>
+                View your electricity bill
+                and payment information.
+            </p>
+
+            <span class="service-link">
+                View Bill →
+            </span>
+
+        </a>
+
+
+        <!-- NOTIFICATIONS -->
+
+        <a href="{{ url_for('user_notifications') }}"
+           class="service-card">
+
+            <div class="service-icon">
+                🔔
+            </div>
+
+            <h3>
+                Notifications
+            </h3>
+
+            <p>
+                View electricity service
+                notifications and alerts.
+            </p>
+
+            <span class="service-link">
+                View Notifications →
+            </span>
+
+        </a>
+
+
+        <!-- PROFILE -->
+
+        <a href="{{ url_for('profile') }}"
+           class="service-card">
+
+            <div class="service-icon">
+                👤
+            </div>
+
+            <h3>
+                My Profile
+            </h3>
+
+            <p>
+                View your account
+                information.
+            </p>
+
+            <span class="service-link">
+                View Profile →
+            </span>
+
+        </a>
+
+
+        <!-- HELP -->
+
+        <a href="{{ url_for('user_help') }}"
+           class="service-card">
+
+            <div class="service-icon">
+                🆘
+            </div>
+
+            <h3>
+                Help & Support
+            </h3>
+
+            <p>
+                Get information about
+                electricity services.
+            </p>
+
+            <span class="service-link">
+                Get Help →
+            </span>
+
+        </a>
+
+
+        <!-- LOGOUT -->
+
+        <a href="{{ url_for('logout') }}"
+           class="service-card logout-card">
+
+            <div class="service-icon">
+                🚪
+            </div>
+
+            <h3>
+                Logout
+            </h3>
+
+            <p>
+                Securely logout from
+                your account.
+            </p>
+
+            <span class="service-link">
+                Logout →
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <!-- =================================================
+         SYSTEM STATUS
+    ================================================== -->
+
+    <div class="system-status">
+
+        <div class="status-left">
+
+            <div class="large-status-icon">
+                🟢
+            </div>
+
+            <div>
+
+                <h3>
+                    System Status
+                </h3>
+
+                <p>
+                    Smart Village Electricity System
+                    is currently Online
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status-right">
+
+            <span class="status-dot"></span>
+
+            <strong>
+                Online
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FOOTER
+    ================================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Smart Village Electricity
+            Management System
+        </p>
+
+        <p>
+            AI & Data Science Project
+        </p>
+
+    </footer>
+
+
+</div>
+
+
+<!-- =====================================================
+     USER DASHBOARD JAVASCRIPT
+===================================================== -->
+
+<script src="{{ url_for('static',
+                         filename='js/user_dashboard.js') }}">
+</script>
+
+
+</body>
+
+</html>

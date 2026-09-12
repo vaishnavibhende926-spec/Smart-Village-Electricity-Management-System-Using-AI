@@ -1,0 +1,919 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Consumption | Smart Village</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f9;
+            color: #263238;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #073b4c;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .logo p {
+            margin-top: 7px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px 16px;
+            margin: 7px 0;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #0b7285;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .topbar h3 {
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout {
+            text-decoration: none;
+            background: #e63946;
+            color: white;
+            padding: 9px 15px;
+            border-radius: 7px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px;
+        }
+
+        .heading h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .heading p {
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        /* CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card-icon {
+            font-size: 27px;
+        }
+
+        .card-title {
+            color: #777;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .card-value {
+            font-size: 25px;
+            font-weight: bold;
+            color: #087f8c;
+            margin-top: 8px;
+        }
+
+        /* CHART */
+
+        .section {
+            background: white;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .chart-box {
+            height: 350px;
+        }
+
+        /* TABLE */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #eeeeee;
+            text-align: left;
+        }
+
+        th {
+            background: #f4f8f9;
+        }
+
+        .normal {
+            color: #16803c;
+            font-weight: bold;
+        }
+
+        .high {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 1000px) {
+
+            .cards {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width: 700px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>⚡ Smart Village</h2>
+
+            <p>Electricity Management</p>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="{{ url_for('user_dashboard') }}">
+                🏠 Dashboard
+            </a>
+
+            <a href="{{ url_for('user_consumption') }}"
+               class="active">
+
+                ⚡ My Consumption
+
+            </a>
+
+            <a href="{{ url_for('user_bill') }}">
+                💳 Electricity Bill
+            </a>
+
+            <a href="{{ url_for('user_notifications') }}">
+                🔔 Notifications
+            </a>
+
+            <a href="{{ url_for('profile') }}">
+                👤 My Profile
+            </a>
+
+            <a href="{{ url_for('user_help') }}">
+                🆘 Help & Support
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                🚪 Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <h3>
+                My Consumption
+            </h3>
+
+            <div class="user-info">
+
+                <span>
+                    👤 {{ session.get("name", "User") }}
+                </span>
+
+                <a class="logout"
+                   href="{{ url_for('logout') }}">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <div class="heading">
+
+                <h1>
+                    ⚡ My Electricity Consumption
+                </h1>
+
+                <p>
+                    Monitor your electricity usage and
+                    understand your consumption pattern.
+                </p>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="cards">
+
+
+                <div class="card">
+
+                    <div class="card-icon">
+                        ⚡
+                    </div>
+
+                    <div class="card-title">
+                        Current Reading
+                    </div>
+
+                    <div class="card-value"
+                         id="current">
+
+                        Loading...
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-icon">
+                        📊
+                    </div>
+
+                    <div class="card-title">
+                        Average Consumption
+                    </div>
+
+                    <div class="card-value"
+                         id="average">
+
+                        Loading...
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-icon">
+                        🔝
+                    </div>
+
+                    <div class="card-title">
+                        Maximum Consumption
+                    </div>
+
+                    <div class="card-value"
+                         id="maximum">
+
+                        Loading...
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-icon">
+                        📈
+                    </div>
+
+                    <div class="card-title">
+                        Total Readings
+                    </div>
+
+                    <div class="card-value"
+                         id="total">
+
+                        Loading...
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- CHART -->
+
+            <div class="section">
+
+                <h2>
+                    📈 Consumption Trend
+                </h2>
+
+                <p>
+                    Recent electricity demand readings
+                    connected to the system.
+                </p>
+
+                <div class="chart-box">
+
+                    <canvas id="consumptionChart">
+                    </canvas>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="section">
+
+                <h2>
+                    📋 Recent Readings
+                </h2>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Date & Time
+                                </th>
+
+                                <th>
+                                    Consumption
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tableBody">
+
+                            <tr>
+
+                                <td colspan="3">
+                                    Loading...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <footer>
+
+            Smart Village Electricity Management System
+            <br>
+
+            AI-Based Electricity Monitoring & Decision Support
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+<script>
+
+let chart = null;
+
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
+async function loadConsumption() {
+
+    try {
+
+        const response =
+            await fetch(
+                "{{ url_for('user_consumption_api') }}"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "API request failed"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Received data:",
+            data
+        );
+
+
+        if (!Array.isArray(data)) {
+
+            throw new Error(
+                "Invalid API response"
+            );
+
+        }
+
+
+        /* EMPTY DATA */
+
+        if (data.length === 0) {
+
+            document.getElementById(
+                "current"
+            ).innerText = "0";
+
+            document.getElementById(
+                "average"
+            ).innerText = "0";
+
+            document.getElementById(
+                "maximum"
+            ).innerText = "0";
+
+            document.getElementById(
+                "total"
+            ).innerText = "0";
+
+            document.getElementById(
+                "tableBody"
+            ).innerHTML = `
+                <tr>
+                    <td colspan="3">
+                        No consumption data available.
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        /* VALUES */
+
+        const values =
+            data.map(
+                item =>
+                    Number(item.consumption) || 0
+            );
+
+
+        const current =
+            values[values.length - 1];
+
+
+        const average =
+            values.reduce(
+                (sum, value) =>
+                    sum + value,
+                0
+            ) / values.length;
+
+
+        const maximum =
+            Math.max(...values);
+
+
+        /* CARDS */
+
+        document.getElementById(
+            "current"
+        ).innerText =
+            current.toFixed(2);
+
+
+        document.getElementById(
+            "average"
+        ).innerText =
+            average.toFixed(2);
+
+
+        document.getElementById(
+            "maximum"
+        ).innerText =
+            maximum.toFixed(2);
+
+
+        document.getElementById(
+            "total"
+        ).innerText =
+            values.length;
+
+
+        /* TABLE */
+
+        const tableBody =
+            document.getElementById(
+                "tableBody"
+            );
+
+
+        tableBody.innerHTML = "";
+
+
+        data
+            .slice()
+            .reverse()
+            .slice(0, 10)
+            .forEach(item => {
+
+                const value =
+                    Number(
+                        item.consumption
+                    ) || 0;
+
+
+                let status =
+                    "Normal";
+
+
+                let className =
+                    "normal";
+
+
+                if (value > average * 1.5) {
+
+                    status =
+                        "High Usage";
+
+                    className =
+                        "high";
+
+                }
+
+
+                tableBody.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            ${item.datetime}
+                        </td>
+
+                        <td>
+                            ${value.toFixed(2)}
+                        </td>
+
+                        <td class="${className}">
+                            ${status}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+        /* CHART */
+
+        const labels =
+            data.map(
+                item =>
+                    item.datetime
+            );
+
+
+        const chartData =
+            data.map(
+                item =>
+                    Number(
+                        item.consumption
+                    ) || 0
+            );
+
+
+        const ctx =
+            document
+                .getElementById(
+                    "consumptionChart"
+                )
+                .getContext("2d");
+
+
+        if (chart) {
+
+            chart.destroy();
+
+        }
+
+
+        chart = new Chart(
+            ctx,
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Electricity Consumption",
+
+                            data:
+                                chartData,
+
+                            borderWidth: 3,
+
+                            tension: 0.3,
+
+                            fill: true
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+
+                                maxTicksLimit: 10
+
+                            }
+
+                        },
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            title: {
+
+                                display: true,
+
+                                text:
+                                    "Power Demand"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Consumption error:",
+            error
+        );
+
+
+        document.getElementById(
+            "tableBody"
+        ).innerHTML = `
+
+            <tr>
+
+                <td colspan="3">
+
+                    Unable to load
+                    consumption data.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* START */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadConsumption();
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
+```

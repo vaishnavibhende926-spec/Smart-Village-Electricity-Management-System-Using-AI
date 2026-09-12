@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Register | Smart Village Electricity</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+    font-family: Arial, sans-serif;
+}
+
+body {
+
+    min-height: 100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        #071827,
+        #0b2b40,
+        #075b72
+    );
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 25px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 1050px;
+
+    min-height: 650px;
+
+    background: white;
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    display: grid;
+
+    grid-template-columns: 42% 58%;
+
+    box-shadow:
+    0 25px 60px
+    rgba(0,0,0,0.35);
+}
+
+
+/* LEFT */
+
+.left {
+
+    background:
+    linear-gradient(
+        160deg,
+        #0b1f33,
+        #075b72
+    );
+
+    color: white;
+
+    padding: 55px 45px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+.logo {
+
+    width: 75px;
+
+    height: 75px;
+
+    background: #16b8d4;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 38px;
+
+    margin-bottom: 25px;
+}
+
+.left h1 {
+
+    font-size: 32px;
+
+    line-height: 1.2;
+
+    margin-bottom: 18px;
+}
+
+.left p {
+
+    color: #d7e8ef;
+
+    line-height: 1.7;
+
+    margin-bottom: 35px;
+}
+
+.feature {
+
+    margin: 17px 0;
+
+    color: #e9f8fc;
+}
+
+.feature span {
+
+    color: #16b8d4;
+
+    margin-right: 10px;
+}
+
+
+/* RIGHT */
+
+.right {
+
+    padding: 45px 55px;
+
+    overflow-y: auto;
+}
+
+.right h2 {
+
+    color: #0b1f33;
+
+    font-size: 30px;
+
+    margin-bottom: 8px;
+}
+
+.subtitle {
+
+    color: #64748b;
+
+    margin-bottom: 23px;
+}
+
+
+/* MESSAGE */
+
+.error {
+
+    background: #fff1f2;
+
+    color: #b42318;
+
+    padding: 12px;
+
+    border-radius: 9px;
+
+    margin-bottom: 18px;
+
+    font-size: 14px;
+}
+
+
+/* ROLE */
+
+.role-title {
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #263746;
+
+    margin-bottom: 10px;
+}
+
+.roles {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.roles input {
+
+    display: none;
+}
+
+.role-card {
+
+    border: 2px solid #dbe5ea;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    color: #334155;
+
+    font-weight: bold;
+}
+
+.roles input:checked + .role-card {
+
+    border-color: #087ea4;
+
+    background: #e8f8fb;
+
+    color: #075b72;
+}
+
+.role-icon {
+
+    display: block;
+
+    font-size: 23px;
+
+    margin-bottom: 5px;
+}
+
+
+/* FIELD */
+
+.field {
+
+    margin-bottom: 15px;
+}
+
+.field label {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #263746;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+.field input {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: 1px solid #ccd9df;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 15px;
+}
+
+.field input:focus {
+
+    border-color: #087ea4;
+
+    box-shadow:
+    0 0 0 3px
+    rgba(8,126,164,0.12);
+}
+
+
+/* OFFICER */
+
+#officerFields {
+
+    display: none;
+}
+
+
+/* BUTTON */
+
+.register-btn {
+
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #075b72,
+        #087ea4
+    );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    margin-top: 3px;
+}
+
+.register-btn:hover {
+
+    opacity: 0.92;
+
+    transform: translateY(-1px);
+}
+
+
+/* LOGIN */
+
+.login {
+
+    text-align: center;
+
+    margin-top: 20px;
+
+    color: #64748b;
+}
+
+.login a {
+
+    color: #087ea4;
+
+    font-weight: bold;
+
+    text-decoration: none;
+}
+
+
+/* MOBILE */
+
+@media(max-width:800px) {
+
+    .container {
+
+        grid-template-columns: 1fr;
+    }
+
+    .left {
+
+        display: none;
+    }
+
+    .right {
+
+        padding: 35px 25px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- LEFT -->
+
+<div class="left">
+
+    <div class="logo">
+        ⚡
+    </div>
+
+    <h1>
+        Smart Village
+        <br>
+        Electricity
+    </h1>
+
+    <p>
+
+        Create your secure account and
+        access AI-powered electricity
+        management services.
+
+    </p>
+
+
+    <div class="feature">
+        <span>✓</span>
+        Secure account registration
+    </div>
+
+    <div class="feature">
+        <span>✓</span>
+        AI electricity analytics
+    </div>
+
+    <div class="feature">
+        <span>✓</span>
+        Demand forecasting
+    </div>
+
+    <div class="feature">
+        <span>✓</span>
+        Abnormal consumption analysis
+    </div>
+
+</div>
+
+
+<!-- RIGHT -->
+
+<div class="right">
+
+    <h2>
+        Create Account
+    </h2>
+
+    <p class="subtitle">
+
+        Register as a User or Electricity Officer.
+
+    </p>
+
+
+    {% if error %}
+
+    <div class="error">
+
+        {{ error }}
+
+    </div>
+
+    {% endif %}
+
+
+    <form
+    action="{{ url_for('register') }}"
+    method="POST"
+    onsubmit="return validateForm()">
+
+
+        <!-- ROLE -->
+
+        <div class="role-title">
+
+            Account Type
+
+        </div>
+
+
+        <div class="roles">
+
+
+            <!-- USER -->
+
+            <input
+            type="radio"
+            id="registerUser"
+            name="role"
+            value="user"
+            checked
+            onchange="changeRole()"
+            >
+
+            <label
+            for="registerUser"
+            class="role-card">
+
+                <span class="role-icon">
+                    👤
+                </span>
+
+                User
+
+            </label>
+
+
+            <!-- OFFICER -->
+
+            <input
+            type="radio"
+            id="registerOfficer"
+            name="role"
+            value="officer"
+            onchange="changeRole()"
+            >
+
+            <label
+            for="registerOfficer"
+            class="role-card">
+
+                <span class="role-icon">
+                    🛡️
+                </span>
+
+                Officer
+
+            </label>
+
+
+        </div>
+
+
+        <!-- NAME -->
+
+        <div class="field">
+
+            <label>
+                Full Name *
+            </label>
+
+            <input
+            type="text"
+            name="name"
+            placeholder="Enter your full name"
+            required>
+
+        </div>
+
+
+        <!-- GMAIL -->
+
+        <div class="field">
+
+            <label>
+                Gmail Address *
+            </label>
+
+            <input
+            type="email"
+            name="email"
+            placeholder="example@gmail.com"
+            required>
+
+        </div>
+
+
+        <!-- PHONE -->
+
+        <div class="field">
+
+            <label>
+                Mobile Number
+            </label>
+
+            <input
+            type="tel"
+            name="phone"
+            placeholder="Enter mobile number">
+
+        </div>
+
+
+        <!-- OFFICER DETAILS -->
+
+        <div id="officerFields">
+
+            <div class="field">
+
+                <label>
+                    Department *
+                </label>
+
+                <input
+                type="text"
+                name="department"
+                id="department"
+                placeholder="Electricity Distribution">
+
+            </div>
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="field">
+
+            <label>
+                Create Password *
+            </label>
+
+            <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Minimum 6 characters"
+            required>
+
+        </div>
+
+
+        <!-- CONFIRM PASSWORD -->
+
+        <div class="field">
+
+            <label>
+                Confirm Password *
+            </label>
+
+            <input
+            type="password"
+            name="confirm_password"
+            id="confirm_password"
+            placeholder="Re-enter password"
+            required>
+
+        </div>
+
+
+        <!-- SUBMIT -->
+
+        <button
+        type="submit"
+        class="register-btn">
+
+            Create Account
+
+        </button>
+
+
+    </form>
+
+
+    <div class="login">
+
+        Already have an account?
+
+        <a href="{{ url_for('login') }}">
+            Login
+        </a>
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+function changeRole() {
+
+    const officer =
+        document.getElementById(
+            "registerOfficer"
+        ).checked;
+
+
+    const officerFields =
+        document.getElementById(
+            "officerFields"
+        );
+
+
+    const department =
+        document.getElementById(
+            "department"
+        );
+
+
+    if (officer) {
+
+        officerFields.style.display =
+            "block";
+
+        department.required =
+            true;
+
+    }
+
+    else {
+
+        officerFields.style.display =
+            "none";
+
+        department.required =
+            false;
+
+        department.value =
+            "";
+
+    }
+
+}
+
+
+function validateForm() {
+
+    const password =
+        document.getElementById(
+            "password"
+        ).value;
+
+
+    const confirmPassword =
+        document.getElementById(
+            "confirm_password"
+        ).value;
+
+
+    if (password.length < 6) {
+
+        alert(
+            "Password must contain at least 6 characters."
+        );
+
+        return false;
+
+    }
+
+
+    if (
+        password !==
+        confirmPassword
+    ) {
+
+        alert(
+            "Passwords do not match."
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+</script>
+
+
+</body>
+
+</html>

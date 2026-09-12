@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Smart Village Electricity Management</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                linear-gradient(
+                    135deg,
+                    #063b3b,
+                    #0b6868,
+                    #0d8b8b
+                );
+        }
+
+        .login-container {
+            width: 420px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 15px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 50%;
+
+            background: #0b6868;
+            color: white;
+
+            font-size: 35px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #063b3b;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 13px;
+
+            border: 1px solid #ccc;
+            border-radius: 9px;
+
+            font-size: 15px;
+            outline: none;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #0b6868;
+            box-shadow:
+                0 0 0 3px rgba(11, 104, 104, 0.1);
+        }
+
+        .role-title {
+            margin-bottom: 10px;
+        }
+
+        .role-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .role-option {
+            flex: 1;
+
+            border: 2px solid #ddd;
+            border-radius: 10px;
+
+            padding: 14px;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .role-option:hover {
+            border-color: #0b6868;
+        }
+
+        .role-option input {
+            margin-right: 5px;
+        }
+
+        .login-btn {
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #0b6868;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #063b3b;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 22px;
+
+            color: #666;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #0b6868;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back-home a {
+            color: #777;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        @media (max-width: 500px) {
+
+            .login-container {
+                width: 90%;
+                padding: 30px 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-container">
+
+    <div class="logo">
+        ⚡
+    </div>
+
+
+    <h1>
+        Welcome Back
+    </h1>
+
+
+    <p class="subtitle">
+        Smart Village Electricity Management System
+    </p>
+
+
+    {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    <!-- IMPORTANT: LOGIN FORM -->
+
+    <form
+        method="POST"
+        action="{{ url_for('login') }}"
+    >
+
+
+        <!-- EMAIL -->
+
+        <div class="form-group">
+
+            <label for="email">
+                Gmail
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your Gmail"
+                required
+            >
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="form-group">
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+        </div>
+
+
+        <!-- ROLE -->
+
+        <div class="form-group">
+
+            <label class="role-title">
+                Login As
+            </label>
+
+
+            <div class="role-container">
+
+
+                <!-- USER -->
+
+                <label class="role-option">
+
+                    <input
+                        type="radio"
+                        name="role"
+                        value="user"
+                        required
+                    >
+
+                    👤 User
+
+                </label>
+
+
+                <!-- OFFICER -->
+
+                <label class="role-option">
+
+                    <input
+                        type="radio"
+                        name="role"
+                        value="officer"
+                    >
+
+                    👮 Officer
+
+                </label>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGIN BUTTON -->
+
+        <button
+            type="submit"
+            class="login-btn"
+        >
+            Login
+        </button>
+
+
+    </form>
+
+
+    <!-- REGISTER -->
+
+    <div class="register-link">
+
+        Don't have an account?
+
+        <a href="{{ url_for('register') }}">
+            Register
+        </a>
+
+    </div>
+
+
+    <div class="back-home">
+
+        <a href="{{ url_for('login') }}">
+            Smart Village Electricity Management
+        </a>
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

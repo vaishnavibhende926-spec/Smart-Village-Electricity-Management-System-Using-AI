@@ -1,0 +1,958 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Officer Dashboard | Smart Village</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f9;
+            color: #263238;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #073b4c;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .logo p {
+            margin: 7px 0 0;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .officer-badge {
+            background: rgba(255,255,255,0.12);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px 15px;
+            margin: 6px 0;
+            border-radius: 9px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #0b7285;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e4e4e4;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 30px;
+        }
+
+        .topbar h3 {
+            margin: 0;
+        }
+
+        .officer-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout {
+            background: #e63946;
+            color: white;
+            padding: 9px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px;
+        }
+
+        .heading h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .heading p {
+            color: #777;
+            margin-top: 8px;
+            margin-bottom: 25px;
+        }
+
+        /* STATUS */
+
+        .status-bar {
+            background: white;
+            padding: 18px 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .online {
+            color: #16803c;
+            font-weight: bold;
+        }
+
+        /* STAT CARDS */
+
+        .stats {
+            display: grid;
+            grid-template-columns:
+                repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card-title {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .card-sub {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* MAIN GRID */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        /* CHART */
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 300px !important;
+        }
+
+        /* AI CARD */
+
+        .ai-box {
+            border-left: 5px solid #0b7285;
+            padding: 18px;
+            background: #f3fafb;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .ai-box h3 {
+            margin: 0 0 8px;
+        }
+
+        .ai-box p {
+            color: #666;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .risk {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #e8f7ed;
+            color: #16803c;
+        }
+
+        /* QUICK ACTIONS */
+
+        .actions {
+            display: grid;
+            grid-template-columns:
+                repeat(5, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .action {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+
+            text-decoration: none;
+            color: #263238;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.05);
+
+            transition: 0.2s;
+        }
+
+        .action:hover {
+            transform: translateY(-3px);
+            background: #f3fafb;
+        }
+
+        .action-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .action-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 1100px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .actions {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+        }
+
+        @media(max-width: 800px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>⚡ Smart Village</h2>
+
+            <p>Electricity Management</p>
+
+        </div>
+
+
+        <div class="officer-badge">
+
+            👮 Officer Panel
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="{{ url_for('officer_dashboard') }}"
+               class="active">
+
+                📊 Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('analytics') }}">
+
+                📈 Analytics
+
+            </a>
+
+
+            <a href="{{ url_for('forecasting') }}">
+
+                🔮 Load Forecasting
+
+            </a>
+
+
+            <a href="{{ url_for('abnormal') }}">
+
+                ⚠️ Abnormal Detection
+
+            </a>
+
+
+            <a href="{{ url_for('alerts') }}">
+
+                🚨 Alerts
+
+            </a>
+
+
+            <a href="{{ url_for('reports') }}">
+
+                📄 Reports
+
+            </a>
+
+
+            <a href="{{ url_for('logout') }}">
+
+                🚪 Logout
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <h3>
+                Officer Dashboard
+            </h3>
+
+
+            <div class="officer-info">
+
+                <span>
+
+                    👮
+                    {{ session.get("name", "Officer") }}
+
+                </span>
+
+
+                <a class="logout"
+                   href="{{ url_for('logout') }}">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <div class="heading">
+
+                <h1>
+                    Electricity Management Dashboard
+                </h1>
+
+                <p>
+                    Monitor electricity demand,
+                    consumption patterns and AI alerts.
+                </p>
+
+            </div>
+
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="status-bar">
+
+                <div>
+
+                    <strong>
+                        System Status
+                    </strong>
+
+                    <span class="online">
+                        ● Online
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    Last Updated:
+                    <strong id="lastUpdated">
+                        Loading...
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats">
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        Current Demand
+                    </div>
+
+                    <div class="card-value"
+                         id="currentDemand">
+
+                        ---
+
+                    </div>
+
+                    <div class="card-sub">
+                        Electricity demand
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        Average Demand
+                    </div>
+
+                    <div class="card-value"
+                         id="averageDemand">
+
+                        ---
+
+                    </div>
+
+                    <div class="card-sub">
+                        Recent readings
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        Maximum Demand
+                    </div>
+
+                    <div class="card-value"
+                         id="maximumDemand">
+
+                        ---
+
+                    </div>
+
+                    <div class="card-sub">
+                        Recent maximum
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        AI Models
+                    </div>
+
+                    <div class="card-value">
+                        2
+                    </div>
+
+                    <div class="card-sub">
+                        Forecast + anomaly
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- DASHBOARD GRID -->
+
+            <div class="dashboard-grid">
+
+
+                <!-- DEMAND -->
+
+                <div class="panel">
+
+                    <h2>
+                        📈 Electricity Demand Trend
+                    </h2>
+
+                    <canvas id="demandChart"></canvas>
+
+                </div>
+
+
+                <!-- AI STATUS -->
+
+                <div class="panel">
+
+                    <h2>
+                        🤖 AI Decision Support
+                    </h2>
+
+
+                    <div class="ai-box">
+
+                        <h3>
+                            🔮 Load Forecasting
+                        </h3>
+
+                        <p>
+                            AI model available for
+                            electricity demand prediction.
+                        </p>
+
+                        <span class="risk">
+                            Model Ready
+                        </span>
+
+                    </div>
+
+
+                    <div class="ai-box">
+
+                        <h3>
+                            ⚠️ Abnormal Detection
+                        </h3>
+
+                        <p>
+                            AI model available for
+                            abnormal consumption
+                            risk detection.
+                        </p>
+
+                        <span class="risk">
+                            Model Ready
+                        </span>
+
+                    </div>
+
+
+                    <div class="ai-box">
+
+                        <h3>
+                            🛡️ Decision Support
+                        </h3>
+
+                        <p>
+                            AI results are intended to
+                            support officer review and
+                            should not directly control
+                            electrical infrastructure.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="panel"
+                 style="margin-top:25px;">
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+
+                <div class="actions">
+
+
+                    <a class="action"
+                       href="{{ url_for('analytics') }}">
+
+                        <div class="action-icon">
+                            📈
+                        </div>
+
+                        <div class="action-title">
+                            Analytics
+                        </div>
+
+                    </a>
+
+
+                    <a class="action"
+                       href="{{ url_for('forecasting') }}">
+
+                        <div class="action-icon">
+                            🔮
+                        </div>
+
+                        <div class="action-title">
+                            Forecasting
+                        </div>
+
+                    </a>
+
+
+                    <a class="action"
+                       href="{{ url_for('abnormal') }}">
+
+                        <div class="action-icon">
+                            ⚠️
+                        </div>
+
+                        <div class="action-title">
+                            Abnormal Detection
+                        </div>
+
+                    </a>
+
+
+                    <a class="action"
+                       href="{{ url_for('alerts') }}">
+
+                        <div class="action-icon">
+                            🚨
+                        </div>
+
+                        <div class="action-title">
+                            Alerts
+                        </div>
+
+                    </a>
+
+
+                    <a class="action"
+                       href="{{ url_for('reports') }}">
+
+                        <div class="action-icon">
+                            📄
+                        </div>
+
+                        <div class="action-title">
+                            Reports
+                        </div>
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <footer>
+
+            Smart Village Electricity Management System
+            <br>
+
+            AI-Based Electricity Monitoring &
+            Decision Support
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+
+async function loadDashboardData() {
+
+    try {
+
+        const response =
+            await fetch(
+                "{{ url_for('demand_api') }}"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data || data.length === 0) {
+
+            return;
+
+        }
+
+
+        const values =
+            data.map(
+                item => Number(item.demand)
+            );
+
+
+        const labels =
+            data.map(
+                item => item.datetime
+            );
+
+
+        const current =
+            values[values.length - 1];
+
+
+        const average =
+            values.reduce(
+                (a, b) => a + b,
+                0
+            ) / values.length;
+
+
+        const maximum =
+            Math.max(...values);
+
+
+        document.getElementById(
+            "currentDemand"
+        ).innerText =
+            current.toFixed(2);
+
+
+        document.getElementById(
+            "averageDemand"
+        ).innerText =
+            average.toFixed(2);
+
+
+        document.getElementById(
+            "maximumDemand"
+        ).innerText =
+            maximum.toFixed(2);
+
+
+        document.getElementById(
+            "lastUpdated"
+        ).innerText =
+            new Date().toLocaleTimeString();
+
+
+        new Chart(
+
+            document.getElementById(
+                "demandChart"
+            ),
+
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Electricity Demand",
+
+                            data: values,
+
+                            tension: 0.3,
+
+                            fill: true
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: false
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Dashboard error:",
+            error
+        );
+
+    }
+
+}
+
+
+loadDashboardData();
+
+
+</script>
+
+
+</body>
+
+</html>
+```
