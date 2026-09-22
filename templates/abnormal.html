@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -240,6 +239,72 @@ footer {
     }
 }
 
+
+/* Enhanced AI analysis UI */
+.page-intro {
+    background: linear-gradient(135deg, #073b4c, #0b7285);
+    color: white;
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 24px rgba(7,59,76,.15);
+}
+.page-intro h1 { margin: 0 0 8px; font-size: 28px; }
+.page-intro p { margin: 0; opacity: .9; line-height: 1.6; }
+
+.input-note {
+    color: #68777d;
+    font-size: 12px;
+    margin-top: 5px;
+}
+.feature-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 20px;
+}
+.feature-item {
+    background: #f4f8f9;
+    border: 1px solid #e1eaed;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+.analysis-details {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.detail-card {
+    background: white;
+    border: 1px solid #e3eaed;
+    border-radius: 10px;
+    padding: 13px;
+}
+.detail-card span {
+    display: block;
+    color: #718087;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+.detail-card strong { font-size: 15px; }
+.action-box {
+    margin-top: 18px;
+    padding: 16px;
+    background: #eef7f8;
+    border-left: 4px solid #0b7285;
+    border-radius: 9px;
+    line-height: 1.55;
+}
+.loading {
+    opacity: .65;
+    pointer-events: none;
+}
+@media(max-width: 600px) {
+    .feature-list, .analysis-details { grid-template-columns: 1fr; }
+}
+
 </style>
 
 </head>
@@ -330,17 +395,12 @@ Logout
 <section class="content">
 
 
-<div class="heading">
-
-<h1>
-⚠️ Abnormal Consumption Detection
-</h1>
-
-<p>
-Use the trained AI model to identify abnormal
-electricity-consumption patterns.
-</p>
-
+<div class="page-intro">
+    <h1>⚠️ AI Abnormal Consumption Detection</h1>
+    <p>
+        Analyze a consumer's electricity-consumption pattern using the trained
+        Random Forest model and identify patterns that may require field verification.
+    </p>
 </div>
 
 
@@ -360,9 +420,8 @@ electricity-consumption patterns.
 
 <div class="form-group">
 
-<label>
-Mean Consumption
-</label>
+<label>Mean Consumption</label>
+<div class="input-note">Average consumption across the available period.</div>
 
 <input
 type="number"
@@ -376,9 +435,8 @@ required>
 
 <div class="form-group">
 
-<label>
-Maximum Consumption
-</label>
+<label>Maximum Consumption</label>
+<div class="input-note">Highest recorded consumption value.</div>
 
 <input
 type="number"
@@ -392,9 +450,8 @@ required>
 
 <div class="form-group">
 
-<label>
-Minimum Consumption
-</label>
+<label>Minimum Consumption</label>
+<div class="input-note">Lowest recorded consumption value.</div>
 
 <input
 type="number"
@@ -408,9 +465,8 @@ required>
 
 <div class="form-group">
 
-<label>
-Standard Deviation
-</label>
+<label>Standard Deviation</label>
+<div class="input-note">Variation in the consumption pattern.</div>
 
 <input
 type="number"
@@ -424,9 +480,8 @@ required>
 
 <div class="form-group">
 
-<label>
-Total Consumption
-</label>
+<label>Total Consumption</label>
+<div class="input-note">Total consumption for the analyzed period.</div>
 
 <input
 type="number"
@@ -446,6 +501,13 @@ required>
 
 </form>
 
+<div class="feature-list">
+    <div class="feature-item">📊 Consumption statistics</div>
+    <div class="feature-item">🤖 Random Forest AI model</div>
+    <div class="feature-item">⚠️ Abnormal-pattern detection</div>
+    <div class="feature-item">👮 Field verification support</div>
+</div>
+
 </div>
 
 
@@ -458,52 +520,43 @@ required>
 </h2>
 
 
-<div class="result">
+<div class="result" id="resultPanel">
 
-<div class="result-icon"
-     id="resultIcon">
+    <div class="result-icon" id="resultIcon">⚡</div>
 
-⚡
+    <div class="result-title">AI Prediction</div>
 
-</div>
+    <div class="result-value" id="resultValue">
+        Waiting for analysis
+    </div>
 
-
-<div class="result-title">
-
-Prediction
+    <div class="badge" id="riskBadge">Model Ready</div>
 
 </div>
 
-
-<div class="result-value"
-     id="resultValue">
-
-Waiting for input
-
+<div class="analysis-details">
+    <div class="detail-card">
+        <span>AI model</span>
+        <strong>Random Forest Classifier</strong>
+    </div>
+    <div class="detail-card">
+        <span>Detection type</span>
+        <strong>Consumption pattern</strong>
+    </div>
 </div>
 
-
-<div class="badge"
-     id="riskBadge">
-
-Model Ready
-
+<div class="action-box" id="actionBox">
+    <strong>Decision Support</strong><br>
+    Enter the consumption values and run the analysis.
+    If an abnormal pattern is detected, authorized electricity
+    personnel should verify the connection and meter data.
 </div>
-
-</div>
-
 
 <div class="warning">
-
-<strong>Important:</strong>
-
-<br><br>
-
-An AI abnormal-consumption prediction does
-not prove electricity theft. It identifies a
-pattern that may require further investigation
-by authorized electricity personnel.
-
+    <strong>Important:</strong><br><br>
+    An AI abnormal-consumption prediction does not prove electricity theft.
+    It identifies a pattern that may require further investigation by
+    authorized electricity personnel.
 </div>
 
 </div>
@@ -547,8 +600,12 @@ document
         document.getElementById("resultIcon");
 
 
-    resultValue.innerText =
-        "Analyzing...";
+    resultValue.innerText = "Analyzing...";
+    riskBadge.innerText = "AI is processing...";
+    resultIcon.innerText = "🔄";
+    document.getElementById("actionBox").innerHTML =
+        "<strong>Analysis in progress</strong><br>Comparing the supplied consumption statistics with the trained AI model.";
+    event.target.classList.add("loading");
 
 
     try {
@@ -641,6 +698,11 @@ document
             riskBadge.style.color =
                 "#b42318";
 
+            document.getElementById("actionBox").innerHTML =
+                "<strong>⚠️ Field verification recommended</strong><br>" +
+                "The model detected an abnormal consumption pattern. " +
+                "This is a risk signal, not proof of theft. Authorized personnel should verify the meter and consumption records.";
+
         }
 
         else {
@@ -662,7 +724,14 @@ document
             riskBadge.style.color =
                 "#16803c";
 
+            document.getElementById("actionBox").innerHTML =
+                "<strong>✅ No abnormal pattern detected</strong><br>" +
+                "The supplied consumption statistics were classified as normal by the trained model. " +
+                "Continue routine monitoring.";
+
         }
+
+        event.target.classList.remove("loading");
 
     }
 
@@ -676,6 +745,10 @@ document
 
         resultIcon.innerText =
             "❌";
+        document.getElementById("actionBox").innerHTML =
+            "<strong>Unable to complete analysis</strong><br>" +
+            "Check the entered values and make sure the Flask API is running.";
+        event.target.classList.remove("loading");
 
     }
 
@@ -686,4 +759,3 @@ document
 </body>
 
 </html>
-```

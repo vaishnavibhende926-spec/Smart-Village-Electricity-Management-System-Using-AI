@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +11,50 @@
     <title>Load Forecasting | Smart Village</title>
 
     <style>
+
+        .location-button {
+    width: 100%;
+    border: none;
+    background: #0b7285;
+    color: white;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.location-button:hover {
+    background: #073b4c;
+}
+
+.location-button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.location-status {
+    margin-top: 10px;
+    padding: 12px;
+    background: #f3fafb;
+    border-left: 4px solid #0b7285;
+    border-radius: 7px;
+    color: #555;
+    font-size: 14px;
+}
+
+.location-status.success {
+    background: #e8f7ed;
+    border-left-color: #16803c;
+    color: #166534;
+}
+
+.location-status.error {
+    background: #fdecec;
+    border-left-color: #d62828;
+    color: #a61b1b;
+}
 
         * {
             box-sizing: border-box;
@@ -203,6 +246,106 @@
             background: #073b4c;
         }
 
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .section-title {
+            margin: 25px 0 15px;
+            color: #073b4c;
+            font-size: 17px;
+        }
+
+        .appliance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .appliance-grid label {
+            font-size: 13px;
+        }
+
+        .result-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #f7f9fa;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #e7edef;
+        }
+
+        .result-card span {
+            display: block;
+            color: #777;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .result-card strong {
+            display: block;
+            color: #073b4c;
+            font-size: 21px;
+        }
+
+        .scenario-summary {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f3fafb;
+        }
+
+        .scenario-summary h3 {
+            margin-top: 0;
+            color: #073b4c;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #dfeaec;
+            font-size: 14px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row span {
+            color: #777;
+        }
+
+        .status.loading {
+            background: #fff8e6;
+            color: #8a6d1d;
+        }
+
+        .status.success {
+            background: #e8f7ed;
+            color: #16723a;
+        }
+
+        .status.error {
+            background: #fdecec;
+            color: #b4232c;
+        }
+
+        .predict-button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
         /* RESULT */
 
         .result-box {
@@ -295,6 +438,13 @@
             .main {
                 margin-left: 200px;
                 width: calc(100% - 200px);
+            }
+
+
+            .two-column,
+            .appliance-grid,
+            .result-cards {
+                grid-template-columns: 1fr;
             }
 
             .forecast-grid {
@@ -412,326 +562,195 @@
 
         <section class="content">
 
-
             <div class="heading">
-
-                <h1>
-                    🔮 Electricity Load Forecasting
-                </h1>
-
-                <p>
-                    Predict electricity demand using
-                    the trained machine learning model.
-                </p>
-
+                <h1>⚡ Festival Electricity Demand Forecast</h1>
+                <p>Use the trained AI model with festival, visitor, weather and appliance scenario inputs to estimate electricity demand.</p>
             </div>
-
 
             <div class="forecast-grid">
 
-
-                <!-- INPUT PANEL -->
-
                 <div class="panel">
-
-                    <h2>
-                        📅 Forecast Input
-                    </h2>
-
-                    <p style="color:#777;">
-
-                        Enter the time information for
-                        which you want to predict demand.
-
+                    <h2>🎯 Forecast Scenario</h2>
+                    <p style="color:#777; line-height:1.5;">
+                        Enter the expected festival-day conditions. Visitor and appliance values are scenario inputs used to estimate additional demand.
                     </p>
 
+                    <form id="festivalForecastForm">
 
-                    <form id="forecastForm">
+                       <div class="form-group">
 
+    <label>📍 Live Location</label>
 
-                        <div class="form-group">
+    <button type="button"
+            id="locationButton"
+            class="location-button">
 
-                            <label>
-                                Hour
-                            </label>
+        📍 Use My Live Location
 
-                            <input
-                                type="number"
-                                id="hour"
-                                min="0"
-                                max="23"
-                                value="18"
-                                required
-                            >
+    </button>
 
-                        </div>
+    <div id="locationStatus"
+         class="location-status">
 
+        Location not detected
 
-                        <div class="form-group">
+    </div>
 
-                            <label>
-                                Day
-                            </label>
+    <input type="hidden"
+           id="location"
+           value="">
 
-                            <input
-                                type="number"
-                                id="day"
-                                min="1"
-                                max="31"
-                                value="15"
-                                required
-                            >
-
-                        </div>
-
+</div>
 
                         <div class="form-group">
-
-                            <label>
-                                Month
-                            </label>
-
-                            <select id="month"
-                                    required>
-
-                                <option value="1">
-                                    January
-                                </option>
-
-                                <option value="2">
-                                    February
-                                </option>
-
-                                <option value="3">
-                                    March
-                                </option>
-
-                                <option value="4">
-                                    April
-                                </option>
-
-                                <option value="5">
-                                    May
-                                </option>
-
-                                <option value="6">
-                                    June
-                                </option>
-
-                                <option value="7">
-                                    July
-                                </option>
-
-                                <option value="8">
-                                    August
-                                </option>
-
-                                <option value="9"
-                                        selected>
-                                    September
-                                </option>
-
-                                <option value="10">
-                                    October
-                                </option>
-
-                                <option value="11">
-                                    November
-                                </option>
-
-                                <option value="12">
-                                    December
-                                </option>
-
+                            <label for="festival">🎉 Festival</label>
+                            <select id="festival" required>
+                                <option value="">Select festival</option>
+                                <option value="Ganesh Chaturthi">Ganesh Chaturthi</option>
+                                <option value="Diwali">Diwali</option>
+                                <option value="Holi">Holi</option>
+                                <option value="Dasara">Dasara</option>
+                                <option value="Gudi Padwa">Gudi Padwa</option>
+                                <option value="Eid">Eid</option>
+                                <option value="Christmas">Christmas</option>
+                                <option value="Other">Other</option>
                             </select>
-
                         </div>
 
+                        <div class="two-column">
+                            <div class="form-group">
+                                <label for="people">👥 Normal People</label>
+                                <input type="number" id="people" min="1" value="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="extra_people">➕ Extra Visitors</label>
+                                <input type="number" id="extra_people" min="0" value="0" required>
+                            </div>
+                        </div>
 
                         <div class="form-group">
-
-                            <label>
-                                Day of Week
-                            </label>
-
-                            <select id="day_of_week"
-                                    required>
-
-                                <option value="0">
-                                    Monday
-                                </option>
-
-                                <option value="1">
-                                    Tuesday
-                                </option>
-
-                                <option value="2">
-                                    Wednesday
-                                </option>
-
-                                <option value="3">
-                                    Thursday
-                                </option>
-
-                                <option value="4">
-                                    Friday
-                                </option>
-
-                                <option value="5">
-                                    Saturday
-                                </option>
-
-                                <option value="6">
-                                    Sunday
-                                </option>
-
-                            </select>
-
+                            <label for="temperature">🌡️ Temperature (°C)</label>
+                            <input type="number" id="temperature" step="0.1" value="30" required>
                         </div>
 
+                        <h3 class="section-title">🏠 Appliance Usage</h3>
 
-                        <button
-                            type="submit"
-                            class="predict-button">
+                        <div class="appliance-grid">
+                            <div>
+                                <label for="fan">🌀 Fans</label>
+                                <input type="number" id="fan" min="0" value="2" required>
+                            </div>
+                            <div>
+                                <label for="ac">❄️ ACs</label>
+                                <input type="number" id="ac" min="0" value="0" required>
+                            </div>
+                            <div>
+                                <label for="tv">📺 TVs</label>
+                                <input type="number" id="tv" min="0" value="1" required>
+                            </div>
+                            <div>
+                                <label for="fridge">🧊 Refrigerators</label>
+                                <input type="number" id="fridge" min="0" value="1" required>
+                            </div>
+                            <div>
+                                <label for="pump">💧 Water Pumps</label>
+                                <input type="number" id="pump" min="0" value="1" required>
+                            </div>
+                            <div>
+                                <label for="geyser">🚿 Geysers</label>
+                                <input type="number" id="geyser" min="0" value="0" required>
+                            </div>
+                            <div>
+                                <label for="lights">💡 Lights</label>
+                                <input type="number" id="lights" min="0" value="5" required>
+                            </div>
+                            <div>
+                                <label for="usage_hours">⏱️ Usage Hours</label>
+                                <input type="number" id="usage_hours" min="0" max="24" step="0.5" value="5" required>
+                            </div>
+                        </div>
 
-                            🔮 Predict Electricity Demand
-
+                        <button type="submit" class="predict-button" id="predictButton">
+                            ⚡ Predict Electricity Demand
                         </button>
-
-
                     </form>
 
-
                     <div class="info-box">
-
-                        <strong>How it works:</strong>
-
+                        <strong>How the AI forecast works</strong>
                         <br><br>
-
-                        The selected time information is
-                        passed to the trained Random Forest
-                        regression model, which generates an
-                        estimated electricity demand.
-
+                        The trained Random Forest model provides an AI baseline from historical electricity-demand features.
+                        Festival, visitor and appliance values are then applied as a scenario estimate.
                     </div>
-
                 </div>
-
-
-                <!-- RESULT PANEL -->
 
                 <div class="panel">
-
-                    <h2>
-                        🤖 AI Prediction
-                    </h2>
-
+                    <h2>🤖 AI Forecast Result</h2>
 
                     <div class="result-box">
-
-                        <div class="result-icon">
-                            ⚡
-                        </div>
-
-                        <div class="result-title">
-
-                            Predicted Electricity Demand
-
-                        </div>
-
-
-                        <div class="prediction"
-                             id="prediction">
-
-                            ---
-
-                        </div>
-
-
-                        <div class="prediction-unit">
-
-                            Demand units from the
-                            training dataset
-
-                        </div>
-
-
-                        <span class="status"
-                              id="status">
-
-                            Model Ready
-
-                        </span>
-
+                        <div class="result-icon">⚡</div>
+                        <div class="result-title">Festival Scenario Demand</div>
+                        <div class="prediction" id="scenarioDemand">---</div>
+                        <div class="prediction-unit">Demand units from the training dataset</div>
+                        <span class="status" id="status">Model Ready</span>
                     </div>
 
+                    <div class="result-cards">
+                        <div class="result-card">
+                            <span>AI Baseline</span>
+                            <strong id="baselineDemand">---</strong>
+                        </div>
+                        <div class="result-card">
+                            <span>Additional Demand</span>
+                            <strong id="additionalDemand">---</strong>
+                        </div>
+                        <div class="result-card">
+                            <span>Total People</span>
+                            <strong id="totalPeople">---</strong>
+                        </div>
+                    </div>
+
+                    <div class="scenario-summary">
+                        <h3>📋 Scenario Summary</h3>
+                        <div class="summary-row">
+                            <span>Location</span>
+                            <strong id="resultLocation">---</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Festival</span>
+                            <strong id="resultFestival">---</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Temperature</span>
+                            <strong id="resultTemperature">---</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Extra Visitors</span>
+                            <strong id="resultVisitors">---</strong>
+                        </div>
+                    </div>
 
                     <div class="model-info">
-
                         <div class="model-item">
-
-                            <strong>
-                                🤖 Algorithm
-                            </strong>
-
-                            <span>
-                                Random Forest Regressor
-                            </span>
-
+                            <strong>🤖 AI Algorithm</strong>
+                            <span>Random Forest Regressor</span>
                         </div>
-
-
                         <div class="model-item">
-
-                            <strong>
-                                📊 Training Data
-                            </strong>
-
-                            <span>
-                                Indian electricity demand
-                                dataset
-                            </span>
-
+                            <strong>📊 Historical Features</strong>
+                            <span>Electricity demand, weather, time, festival and lag features</span>
                         </div>
-
-
                         <div class="model-item">
-
-                            <strong>
-                                🧠 Model File
-                            </strong>
-
-                            <span>
-                                load_forecasting_model.pkl
-                            </span>
-
+                            <strong>🎯 Scenario Inputs</strong>
+                            <span>Visitors, appliances and usage hours</span>
                         </div>
-
-
                         <div class="model-item">
-
-                            <strong>
-                                ⚠️ Decision Support
-                            </strong>
-
-                            <span>
-                                Prediction should be reviewed
-                                by an authorized officer before
-                                operational decisions.
-                            </span>
-
+                            <strong>⚠️ Decision Support</strong>
+                            <span>Forecasts are estimates and should support, not replace, authorized operational decisions.</span>
                         </div>
-
                     </div>
-
                 </div>
 
-
             </div>
-
-
         </section>
-
 
         <footer>
 
@@ -749,157 +768,1046 @@
 
 </div>
 
-
 <script>
 
+    /* ============================================================
+       ELEMENT REFERENCES
+    ============================================================ */
 
-document
-    .getElementById("forecastForm")
-    .addEventListener(
+    const form =
+        document.getElementById("festivalForecastForm");
+
+    const button =
+        document.getElementById("predictButton");
+
+    const status =
+        document.getElementById("status");
+
+    const scenarioDemand =
+        document.getElementById("scenarioDemand");
+
+    const baselineDemand =
+        document.getElementById("baselineDemand");
+
+    const additionalDemand =
+        document.getElementById("additionalDemand");
+
+    const totalPeople =
+        document.getElementById("totalPeople");
+
+
+    /* ============================================================
+       LIVE LOCATION ELEMENTS
+    ============================================================ */
+
+    const locationButton =
+        document.getElementById("locationButton");
+
+    const locationStatus =
+        document.getElementById("locationStatus");
+
+    const locationInput =
+        document.getElementById("location");
+
+
+    /*
+       GPS values
+    */
+
+    let currentLatitude = null;
+
+    let currentLongitude = null;
+
+    let currentAccuracy = null;
+
+
+    /* ============================================================
+       DETECT LIVE LOCATION
+    ============================================================ */
+
+    async function detectLiveLocation() {
+
+        /*
+           Check browser support
+        */
+
+        if (!navigator.geolocation) {
+
+            locationStatus.innerHTML =
+                "❌ Geolocation is not supported by this browser.";
+
+            locationStatus.className =
+                "location-status error";
+
+            return;
+        }
+
+
+        /*
+           Disable location button
+        */
+
+        locationButton.disabled = true;
+
+        locationButton.innerText =
+            "⏳ Detecting Live Location...";
+
+
+        locationStatus.innerText =
+            "Requesting location permission...";
+
+        locationStatus.className =
+            "location-status";
+
+
+        /*
+           Get current GPS location
+        */
+
+        navigator.geolocation.getCurrentPosition(
+
+            async function(position) {
+
+                /*
+                   Store GPS information
+                */
+
+                currentLatitude =
+                    position.coords.latitude;
+
+                currentLongitude =
+                    position.coords.longitude;
+
+                currentAccuracy =
+                    position.coords.accuracy;
+
+
+                console.log(
+                    "Latitude:",
+                    currentLatitude
+                );
+
+                console.log(
+                    "Longitude:",
+                    currentLongitude
+                );
+
+                console.log(
+                    "Accuracy:",
+                    currentAccuracy,
+                    "meters"
+                );
+
+
+                locationStatus.innerText =
+                    "📍 Location detected. Identifying city...";
+
+
+                try {
+
+                    /*
+                       Reverse geocoding
+
+                       GPS coordinates
+                              ↓
+                       City + State
+                    */
+
+                    const reverseURL =
+                        "https://nominatim.openstreetmap.org/reverse" +
+                        "?format=json" +
+                        "&lat=" +
+                        encodeURIComponent(currentLatitude) +
+                        "&lon=" +
+                        encodeURIComponent(currentLongitude) +
+                        "&zoom=10" +
+                        "&addressdetails=1";
+
+
+                    const response =
+                        await fetch(
+                            reverseURL,
+                            {
+                                method: "GET",
+
+                                headers: {
+                                    "Accept":
+                                        "application/json"
+                                }
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Unable to identify your location."
+                        );
+
+                    }
+
+
+                    const data =
+                        await response.json();
+
+
+                    const address =
+                        data.address || {};
+
+
+                    /*
+                       Find city
+                    */
+
+                    const city =
+                        address.city ||
+                        address.town ||
+                        address.village ||
+                        address.municipality ||
+                        address.county ||
+                        "Current Location";
+
+
+                    /*
+                       Find state
+                    */
+
+                    const state =
+                        address.state || "";
+
+
+                    /*
+                       Create readable location
+                    */
+
+                    let detectedLocation =
+                        city;
+
+
+                    if (state) {
+
+                        detectedLocation +=
+                            ", " + state;
+
+                    }
+
+
+                    /*
+                       Store location
+                    */
+
+                    locationInput.value =
+                        detectedLocation;
+
+
+                    /*
+                       Show location
+                    */
+
+                    locationStatus.innerHTML =
+                        "📍 <strong>" +
+                        detectedLocation +
+                        "</strong><br>" +
+
+                        "<small>" +
+
+                        "Latitude: " +
+                        currentLatitude.toFixed(6) +
+
+                        "<br>" +
+
+                        "Longitude: " +
+                        currentLongitude.toFixed(6) +
+
+                        "<br>" +
+
+                        "Accuracy: approximately " +
+                        Math.round(currentAccuracy) +
+                        " meters" +
+
+                        "</small>";
+
+
+                    locationStatus.className =
+                        "location-status success";
+
+
+                    locationButton.innerText =
+                        "✓ Live Location Detected";
+
+
+                    console.log(
+                        "Detected location:",
+                        detectedLocation
+                    );
+
+                }
+
+
+                catch (error) {
+
+                    console.error(
+                        "Reverse geocoding error:",
+                        error
+                    );
+
+
+                    /*
+                       GPS is still valid even if
+                       city identification fails.
+                    */
+
+                    locationInput.value =
+                        currentLatitude +
+                        "," +
+                        currentLongitude;
+
+
+                    locationStatus.innerHTML =
+                        "📍 <strong>GPS Location Detected</strong><br>" +
+
+                        "<small>" +
+
+                        "Latitude: " +
+                        currentLatitude.toFixed(6) +
+
+                        "<br>" +
+
+                        "Longitude: " +
+                        currentLongitude.toFixed(6) +
+
+                        "</small>";
+
+
+                    locationStatus.className =
+                        "location-status success";
+
+
+                    locationButton.innerText =
+                        "✓ Coordinates Detected";
+
+                }
+
+
+                /*
+                   Enable buttons again
+                */
+
+                locationButton.disabled = false;
+
+            },
+
+
+            /*
+               LOCATION ERROR
+            */
+
+            function(error) {
+
+                console.error(
+                    "Location error:",
+                    error
+                );
+
+
+                locationButton.disabled = false;
+
+
+                locationButton.innerText =
+                    "📍 Use My Live Location";
+
+
+                locationInput.value = "";
+
+
+                currentLatitude = null;
+
+                currentLongitude = null;
+
+                currentAccuracy = null;
+
+
+                locationStatus.className =
+                    "location-status error";
+
+
+                /*
+                   Permission denied
+                */
+
+                if (error.code === 1) {
+
+                    locationStatus.innerHTML =
+                        "❌ <strong>Location permission denied.</strong><br>" +
+
+                        "<small>" +
+                        "Please allow location access in Chrome and try again." +
+                        "</small>";
+
+                }
+
+
+                /*
+                   Location unavailable
+                */
+
+                else if (error.code === 2) {
+
+                    locationStatus.innerHTML =
+                        "❌ <strong>Location unavailable.</strong><br>" +
+
+                        "<small>" +
+                        "Please check your device GPS/location settings." +
+                        "</small>";
+
+                }
+
+
+                /*
+                   Timeout
+                */
+
+                else if (error.code === 3) {
+
+                    locationStatus.innerHTML =
+                        "❌ <strong>Location request timed out.</strong><br>" +
+
+                        "<small>" +
+                        "Please try again." +
+                        "</small>";
+
+                }
+
+
+                /*
+                   Unknown error
+                */
+
+                else {
+
+                    locationStatus.innerHTML =
+                        "❌ <strong>Unable to detect location.</strong><br>" +
+
+                        "<small>" +
+                        "Please try again." +
+                        "</small>";
+
+                }
+
+            },
+
+
+            /*
+               LOCATION OPTIONS
+            */
+
+            {
+                enableHighAccuracy: true,
+
+                timeout: 15000,
+
+                maximumAge: 0
+            }
+
+        );
+
+    }
+
+
+    /* ============================================================
+       LOCATION BUTTON
+    ============================================================ */
+
+    locationButton.addEventListener(
+        "click",
+        detectLiveLocation
+    );
+
+
+    /* ============================================================
+       FORECAST FORM
+    ============================================================ */
+
+    form.addEventListener(
         "submit",
         async function(event) {
 
             event.preventDefault();
 
 
-            const hour =
-                Number(
-                    document.getElementById(
-                        "hour"
-                    ).value
+            /* ----------------------------------------------------
+               CHECK LOCATION
+            ---------------------------------------------------- */
+
+            if (!locationInput.value) {
+
+                alert(
+                    "Please click 'Use My Live Location' first."
                 );
 
 
-            const day =
-                Number(
-                    document.getElementById(
-                        "day"
-                    ).value
-                );
+                locationStatus.innerText =
+                    "⚠️ Please detect your live location first.";
+
+                locationStatus.className =
+                    "location-status error";
 
 
-            const month =
-                Number(
-                    document.getElementById(
-                        "month"
-                    ).value
-                );
+                return;
+
+            }
 
 
-            const day_of_week =
-                Number(
-                    document.getElementById(
-                        "day_of_week"
-                    ).value
-                );
+            /* ----------------------------------------------------
+               FESTIVAL
+            ---------------------------------------------------- */
 
-
-            const status =
+            const festival =
                 document.getElementById(
-                    "status"
+                    "festival"
+                ).value;
+
+
+            if (!festival) {
+
+                alert(
+                    "Please select a festival."
+                );
+
+                return;
+
+            }
+
+
+            /* ----------------------------------------------------
+               PEOPLE
+            ---------------------------------------------------- */
+
+            const people =
+                Number(
+                    document.getElementById(
+                        "people"
+                    ).value
                 );
 
 
-            const prediction =
-                document.getElementById(
-                    "prediction"
+            const extraPeople =
+                Number(
+                    document.getElementById(
+                        "extra_people"
+                    ).value
                 );
+
+
+            if (
+                !Number.isFinite(people) ||
+                people < 1
+            ) {
+
+                alert(
+                    "Normal people must be at least 1."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !Number.isFinite(extraPeople) ||
+                extraPeople < 0
+            ) {
+
+                alert(
+                    "Extra visitors cannot be negative."
+                );
+
+                return;
+
+            }
+
+
+            /* ----------------------------------------------------
+               TEMPERATURE
+            ---------------------------------------------------- */
+
+            const temperature =
+                Number(
+                    document.getElementById(
+                        "temperature"
+                    ).value
+                );
+
+
+            if (!Number.isFinite(temperature)) {
+
+                alert(
+                    "Please enter a valid temperature."
+                );
+
+                return;
+
+            }
+
+
+            /* ----------------------------------------------------
+               APPLIANCES
+            ---------------------------------------------------- */
+
+            const fan =
+                Number(
+                    document.getElementById("fan").value
+                );
+
+            const ac =
+                Number(
+                    document.getElementById("ac").value
+                );
+
+            const tv =
+                Number(
+                    document.getElementById("tv").value
+                );
+
+            const fridge =
+                Number(
+                    document.getElementById("fridge").value
+                );
+
+            const pump =
+                Number(
+                    document.getElementById("pump").value
+                );
+
+            const geyser =
+                Number(
+                    document.getElementById("geyser").value
+                );
+
+            const lights =
+                Number(
+                    document.getElementById("lights").value
+                );
+
+
+            const applianceValues = [
+
+                fan,
+                ac,
+                tv,
+                fridge,
+                pump,
+                geyser,
+                lights
+
+            ];
+
+
+            /*
+               Validate appliances
+            */
+
+            for (
+                const value of applianceValues
+            ) {
+
+                if (
+                    !Number.isFinite(value) ||
+                    value < 0
+                ) {
+
+                    alert(
+                        "Appliance quantities cannot be negative."
+                    );
+
+                    return;
+
+                }
+
+            }
+
+
+            /* ----------------------------------------------------
+               USAGE HOURS
+            ---------------------------------------------------- */
+
+            const usageHours =
+                Number(
+                    document.getElementById(
+                        "usage_hours"
+                    ).value
+                );
+
+
+            if (
+                !Number.isFinite(usageHours) ||
+                usageHours < 0 ||
+                usageHours > 24
+            ) {
+
+                alert(
+                    "Usage hours must be between 0 and 24."
+                );
+
+                return;
+
+            }
+
+
+            /* ====================================================
+               LOADING
+            ==================================================== */
+
+            button.disabled = true;
+
+            button.innerText =
+                "⏳ Generating AI Forecast...";
 
 
             status.innerText =
                 "Predicting...";
 
+            status.className =
+                "status loading";
+
+
+            /*
+               Clear previous values
+            */
+
+            scenarioDemand.innerText =
+                "---";
+
+            baselineDemand.innerText =
+                "---";
+
+            additionalDemand.innerText =
+                "---";
+
+            totalPeople.innerText =
+                "---";
+
 
             try {
 
+                /* =================================================
+                   CREATE PAYLOAD
+                ================================================= */
+
+                const payload = {
+
+                    /*
+                       Live location
+                    */
+
+                    location:
+                        locationInput.value,
+
+
+                    /*
+                       GPS coordinates
+                    */
+
+                    latitude:
+                        currentLatitude,
+
+                    longitude:
+                        currentLongitude,
+
+                    location_accuracy:
+                        currentAccuracy,
+
+
+                    /*
+                       Festival
+                    */
+
+                    festival:
+                        festival,
+
+
+                    /*
+                       People
+                    */
+
+                    people:
+                        people,
+
+                    extra_people:
+                        extraPeople,
+
+
+                    /*
+                       Weather
+                    */
+
+                    temperature:
+                        temperature,
+
+
+                    /*
+                       Appliances
+                    */
+
+                    fan:
+                        fan,
+
+                    ac:
+                        ac,
+
+                    tv:
+                        tv,
+
+                    fridge:
+                        fridge,
+
+                    pump:
+                        pump,
+
+                    geyser:
+                        geyser,
+
+                    lights:
+                        lights,
+
+
+                    /*
+                       Usage
+                    */
+
+                    usage_hours:
+                        usageHours
+
+                };
+
+
+                console.log(
+                    "Forecast Payload:",
+                    payload
+                );
+
+
+                /* =================================================
+                   SEND TO FLASK
+                ================================================= */
+
                 const response =
                     await fetch(
-                        "{{ url_for('forecast_api') }}",
+
+                        "{{ url_for('festival_forecast_api') }}",
+
                         {
 
-                            method: "POST",
+                            method:
+                                "POST",
 
                             headers: {
 
                                 "Content-Type":
+                                    "application/json",
+
+                                "Accept":
                                     "application/json"
 
                             },
 
-                            body: JSON.stringify({
-
-                                hour:
-                                    hour,
-
-                                day:
-                                    day,
-
-                                month:
-                                    month,
-
-                                day_of_week:
-                                    day_of_week
-
-                            })
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
 
                         }
+
                     );
 
 
-                const result =
-                    await response.json();
+                /* =================================================
+                   READ RESPONSE
+                ================================================= */
+
+                let result;
 
 
-                if (!response.ok) {
+                try {
+
+                    result =
+                        await response.json();
+
+                }
+
+                catch (jsonError) {
 
                     throw new Error(
-                        result.error ||
-                        "Prediction failed"
+                        "Server returned an invalid response."
                     );
 
                 }
 
 
-                prediction.innerText =
+                console.log(
+                    "Forecast Response:",
+                    result
+                );
+
+
+                /* =================================================
+                   CHECK RESPONSE
+                ================================================= */
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    throw new Error(
+                        result.error ||
+                        "Forecast generation failed."
+                    );
+
+                }
+
+
+                /* =================================================
+                   DISPLAY RESULTS
+                ================================================= */
+
+                scenarioDemand.innerText =
                     Number(
-                        result.prediction
+                        result.scenario_demand
                     ).toFixed(2);
 
 
-                status.innerText =
-                    "✓ Prediction Generated";
+                baselineDemand.innerText =
+                    Number(
+                        result.ai_baseline_demand
+                    ).toFixed(2);
 
+
+                additionalDemand.innerText =
+                    "+" +
+                    Number(
+                        result.additional_demand
+                    ).toFixed(2);
+
+
+                totalPeople.innerText =
+                    result.total_people;
+
+
+                /* ------------------------------------------------
+                   LOCATION
+                ------------------------------------------------ */
+
+                document.getElementById(
+                    "resultLocation"
+                ).innerText =
+                    result.location ||
+                    locationInput.value;
+
+
+                /* ------------------------------------------------
+                   FESTIVAL
+                ------------------------------------------------ */
+
+                document.getElementById(
+                    "resultFestival"
+                ).innerText =
+                    result.festival ||
+                    festival;
+
+
+                /* ------------------------------------------------
+                   TEMPERATURE
+                ------------------------------------------------ */
+
+                document.getElementById(
+                    "resultTemperature"
+                ).innerText =
+                    result.temperature +
+                    " °C";
+
+
+                /* ------------------------------------------------
+                   VISITORS
+                ------------------------------------------------ */
+
+                document.getElementById(
+                    "resultVisitors"
+                ).innerText =
+                    result.extra_people;
+
+
+                /* =================================================
+                   SUCCESS
+                ================================================= */
+
+                status.innerText =
+                    "✓ AI Forecast Generated";
+
+                status.className =
+                    "status success";
 
             }
 
-            catch(error) {
 
-                console.error(error);
+            /* ====================================================
+               ERROR
+            ==================================================== */
+
+            catch (error) {
+
+                console.error(
+                    "Forecast Error:",
+                    error
+                );
 
 
-                prediction.innerText =
+                scenarioDemand.innerText =
+                    "---";
+
+                baselineDemand.innerText =
+                    "---";
+
+                additionalDemand.innerText =
+                    "---";
+
+                totalPeople.innerText =
                     "---";
 
 
                 status.innerText =
                     "Prediction Error";
 
+                status.className =
+                    "status error";
+
 
                 alert(
-                    "Unable to generate prediction: "
-                    + error.message
+                    "Unable to generate forecast:\n\n" +
+                    error.message
                 );
 
             }
 
+
+            /* ====================================================
+               FINALLY
+            ==================================================== */
+
+            finally {
+
+                button.disabled =
+                    false;
+
+                button.innerText =
+                    "⚡ Predict Electricity Demand";
+
+            }
+
         }
+
     );
 
-
 </script>
-
-
 </body>
-
 </html>
-```

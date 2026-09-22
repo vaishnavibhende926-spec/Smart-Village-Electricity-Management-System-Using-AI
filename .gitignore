@@ -1,12 +1,24 @@
-venv/ 
-__pycache__/ 
-*.pyc 
-users.db 
-data/raw/CEEW - Smart meter data Bareilly 2020 (1).csv 
-data/raw/data set.csv/data set.csv 
+# Python
+venv/
+__pycache__/
+*.pyc
 
-# Large machine learning models
+# Machine learning models
 models/*.pkl
+models/*.joblib
 
-# Large machine learning models
-models/*.pkl
+# Large datasets
+data/raw/*.csv
+data/raw/*.xls
+data/raw/*.xlsx
+
+# Processed/generated datasets
+data/processed/*.csv
+
+# Local database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files
+.env

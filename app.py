@@ -13,6 +13,8 @@ import os
 import sqlite3
 import joblib
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -981,6 +983,372 @@ def demand_api():
         })
 
     return jsonify(result)
+# ============================================================
+# CURRENT MSEDCL DEMAND API
+# ============================================================
+
+@app.route("/api/current-demand")
+def current_demand_api():
+
+    if not officer_required():
+
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 401
+
+    MSEDCL_URL = (
+        "https://www.mahadiscom.in/en/msedcl-peak-demand-en/"
+    )
+
+    try:
+
+        # ----------------------------------------------------
+        # REQUEST OFFICIAL MSEDCL PAGE
+        # ----------------------------------------------------
+
+        response = requests.get(
+            MSEDCL_URL,
+            timeout=15,
+            headers={
+                "User-Agent":
+                    "Mozilla/5.0 "
+                    "(Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) "
+                    "Chrome/140 Safari/537.36"
+            }
+        )
+
+        response.raise_for_status()
+
+
+        # ----------------------------------------------------
+        # PARSE HTML
+        # ----------------------------------------------------
+
+        soup = BeautifulSoup(
+            response.text,
+            "html.parser"
+        )
+
+
+        # ----------------------------------------------------
+        # FIND CURRENT STATUS TABLE
+        # ----------------------------------------------------
+
+        tables = soup.find_all("table")
+
+
+        if not tables:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "MSEDCL demand table was not found."
+
+            }), 503
+
+
+        status_values = {}
+
+
+        # ----------------------------------------------------
+        # SEARCH ALL TABLE ROWS
+        # ----------------------------------------------------
+
+        for table in tables:
+
+            rows = table.find_all("tr")
+
+            for row in rows:
+
+                cells = row.find_all(
+                    ["td", "th"]
+                )
+
+                values = [
+
+                    cell.get_text(
+                        " ",
+                        strip=True
+                    )
+
+                    for cell in cells
+
+                ]
+
+
+                if len(values) < 2:
+
+                    continue
+
+
+                field = values[0]
+
+                value = values[1]
+
+                date = (
+                    values[2]
+                    if len(values) >= 3
+                    else ""
+                )
+
+
+                status_values[field] = {
+
+                    "value": value,
+
+                    "date": date
+
+                }
+
+
+        # ----------------------------------------------------
+        # HELPER FUNCTION
+        # ----------------------------------------------------
+
+        def get_value(
+            field_name
+        ):
+
+            item = status_values.get(
+                field_name,
+                {}
+            )
+
+            value = item.get(
+                "value"
+            )
+
+            date = item.get(
+                "date",
+                ""
+            )
+
+            if value is None:
+
+                return None, ""
+
+            try:
+
+                numeric_value = float(
+                    str(value)
+                    .replace(",", "")
+                    .strip()
+                )
+
+            except Exception:
+
+                numeric_value = None
+
+
+            return (
+                numeric_value,
+                date
+            )
+
+
+        # ----------------------------------------------------
+        # EXTRACT VALUES
+        # ----------------------------------------------------
+
+        demand_catered, demand_date = \
+            get_value(
+                "DEMAND_CATERED"
+            )
+
+
+        monthly_peak, monthly_peak_date = \
+            get_value(
+                "DEMAND_CATERED_MONTH"
+            )
+
+
+        yearly_peak, yearly_peak_date = \
+            get_value(
+                "DEMAND_CATERED_YEAR"
+            )
+
+
+        yearly_till_date, yearly_till_date_date = \
+            get_value(
+                "DEMAND_CATERED_TILL"
+            )
+
+
+        morning_peak, morning_peak_date = \
+            get_value(
+                "MORNING_PEAK"
+            )
+
+
+        day_peak, day_peak_date = \
+            get_value(
+                "DAY_PEAK"
+            )
+
+
+        evening_peak, evening_peak_date = \
+            get_value(
+                "EVENING_PEAK"
+            )
+
+
+        night_minimum, night_minimum_date = \
+            get_value(
+                "NIGHT_MINIMUM"
+            )
+
+
+        # ----------------------------------------------------
+        # VALIDATE CURRENT DATA
+        # ----------------------------------------------------
+
+        if demand_catered is None:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Current MSEDCL demand could not be read."
+
+            }), 503
+
+
+        # ----------------------------------------------------
+        # RETURN JSON
+        # ----------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "source":
+                "MSEDCL Official Peak Demand",
+
+            "source_url":
+                MSEDCL_URL,
+
+            "demand_catered":
+                round(
+                    demand_catered,
+                    2
+                ),
+
+            "demand_date":
+                demand_date,
+
+            "monthly_peak":
+                round(
+                    monthly_peak,
+                    2
+                )
+                if monthly_peak is not None
+                else None,
+
+            "monthly_peak_date":
+                monthly_peak_date,
+
+            "yearly_peak":
+                round(
+                    yearly_peak,
+                    2
+                )
+                if yearly_peak is not None
+                else None,
+
+            "yearly_peak_date":
+                yearly_peak_date,
+
+            "yearly_till_date":
+                round(
+                    yearly_till_date,
+                    2
+                )
+                if yearly_till_date is not None
+                else None,
+
+            "yearly_till_date_date":
+                yearly_till_date_date,
+
+            "morning_peak":
+                round(
+                    morning_peak,
+                    2
+                )
+                if morning_peak is not None
+                else None,
+
+            "morning_peak_date":
+                morning_peak_date,
+
+            "day_peak":
+                round(
+                    day_peak,
+                    2
+                )
+                if day_peak is not None
+                else None,
+
+            "day_peak_date":
+                day_peak_date,
+
+            "evening_peak":
+                round(
+                    evening_peak,
+                    2
+                )
+                if evening_peak is not None
+                else None,
+
+            "evening_peak_date":
+                evening_peak_date,
+
+            "night_minimum":
+                round(
+                    night_minimum,
+                    2
+                )
+                if night_minimum is not None
+                else None,
+
+            "night_minimum_date":
+                night_minimum_date,
+
+            "data_scope":
+                "Maharashtra-wide MSEDCL grid demand"
+
+        })
+
+
+    except requests.RequestException as e:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Could not connect to MSEDCL: "
+                + str(e)
+
+        }), 503
+
+
+    except Exception as e:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Error reading MSEDCL data: "
+                + str(e)
+
+        }), 500
 
 
 # ============================================================
@@ -1499,6 +1867,10 @@ def forecasting():
 # LOAD FORECASTING API
 # ============================================================
 
+# ============================================================
+# LOAD FORECASTING API
+# ============================================================
+
 @app.route(
     "/api/forecast",
     methods=["POST"]
@@ -1514,72 +1886,413 @@ def forecast_api():
     if load_model is None:
 
         return jsonify({
+            "error": "Load forecasting model is not available."
+        }), 500
 
-            "error":
-                "Load forecasting model is not available."
+    if demand_df.empty:
 
+        return jsonify({
+            "error": "Electricity demand dataset is not available."
         }), 500
 
     try:
 
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
 
-        hour = float(
-            data["hour"]
-        )
+        hour = int(data.get("hour", 18))
+        day = int(data.get("day", 15))
+        month = int(data.get("month", 9))
+        day_of_week = int(data.get("day_of_week", 0))
 
-        day = float(
-            data["day"]
-        )
+        if not 0 <= hour <= 23:
+            raise ValueError("Hour must be between 0 and 23.")
 
-        month = float(
-            data["month"]
-        )
+        if not 1 <= day <= 31:
+            raise ValueError("Day must be between 1 and 31.")
 
-        day_of_week = float(
-            data["day_of_week"]
-        )
+        if not 1 <= month <= 12:
+            raise ValueError("Month must be between 1 and 12.")
 
-        input_data = pd.DataFrame({
+        if not 0 <= day_of_week <= 6:
+            raise ValueError("Day of week must be between 0 and 6.")
 
-            "hour": [hour],
+        input_data = pd.DataFrame([[
+            hour,
+            day,
+            month,
+            day_of_week
+        ]], columns=[
+            "hour",
+            "day",
+            "month",
+            "day_of_week"
+        ])
 
-            "day": [day],
-
-            "month": [month],
-
-            "day_of_week": [day_of_week]
-
-        })
-
-        prediction = load_model.predict(
-            input_data
-        )
-
-        predicted_value = float(
-            prediction[0]
+        prediction = float(
+            load_model.predict(input_data)[0]
         )
 
         return jsonify({
-
-            "prediction":
-                round(
-                    predicted_value,
-                    2
-                )
-
+            "success": True,
+            "hour": hour,
+            "day": day,
+            "month": month,
+            "day_of_week": day_of_week,
+            "predicted_demand": round(prediction, 2)
         })
 
     except Exception as e:
 
         return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 400
+
+
+# ============================================================
+# FESTIVAL ELECTRICITY FORECAST API
+# ============================================================
+
+@app.route(
+    "/api/festival-forecast",
+    methods=["POST"]
+)
+def festival_forecast_api():
+
+    try:
+
+        data = request.get_json()
+
+        # -----------------------------
+        # User inputs
+        # -----------------------------
+
+        location = data.get(
+            "location",
+            ""
+        )
+
+        festival = data.get(
+            "festival",
+            ""
+        )
+
+        people = int(
+            data.get("people", 0)
+        )
+
+        extra_people = int(
+            data.get("extra_people", 0)
+        )
+
+        temperature = float(
+            data.get("temperature", 30)
+        )
+
+        fan = int(
+            data.get("fan", 0)
+        )
+
+        ac = int(
+            data.get("ac", 0)
+        )
+
+        tv = int(
+            data.get("tv", 0)
+        )
+
+        fridge = int(
+            data.get("fridge", 0)
+        )
+
+        pump = int(
+            data.get("pump", 0)
+        )
+
+        geyser = int(
+            data.get("geyser", 0)
+        )
+
+        lights = int(
+            data.get("lights", 0)
+        )
+
+        usage_hours = float(
+            data.get("usage_hours", 0)
+        )
+
+
+        # -----------------------------
+        # Load festival model
+        # -----------------------------
+
+        import joblib
+        import numpy as np
+
+        FESTIVAL_MODEL_FILE = (
+            "models/"
+            "festival_demand_forecasting_model.pkl"
+        )
+
+        FESTIVAL_DATA_FILE = (
+            "data/processed/"
+            "final_forecasting_data.csv"
+        )
+
+        festival_model = joblib.load(
+            FESTIVAL_MODEL_FILE
+        )
+
+        festival_df = pd.read_csv(
+            FESTIVAL_DATA_FILE
+        )
+
+
+        # -----------------------------
+        # Latest available data
+        # -----------------------------
+
+        latest = (
+            festival_df
+            .dropna()
+            .iloc[-1]
+        )
+
+
+        # -----------------------------
+        # Forecast time
+        # -----------------------------
+
+        hour = 19
+        day = 15
+        month = 9
+        day_of_week = 5
+
+        is_weekend = int(
+            day_of_week >= 5
+        )
+
+
+        hour_sin = np.sin(
+            2 * np.pi * hour / 24
+        )
+
+        hour_cos = np.cos(
+            2 * np.pi * hour / 24
+        )
+
+        month_sin = np.sin(
+            2 * np.pi * month / 12
+        )
+
+        month_cos = np.cos(
+            2 * np.pi * month / 12
+        )
+
+
+        # Festival indicators
+
+        is_festival = 1
+        is_public_holiday = 1
+        festival_day = 1
+
+
+        # -----------------------------
+        # Prepare model input
+        # -----------------------------
+
+        input_data = pd.DataFrame([{
+
+            "hour": hour,
+
+            "day": day,
+
+            "month": month,
+
+            "day_of_week": day_of_week,
+
+            "is_weekend": is_weekend,
+
+            "hour_sin": hour_sin,
+
+            "hour_cos": hour_cos,
+
+            "month_sin": month_sin,
+
+            "month_cos": month_cos,
+
+            "temp": temperature,
+
+            "dwpt": latest["dwpt"],
+
+            "rhum": latest["rhum"],
+
+            "wdir": latest["wdir"],
+
+            "wspd": latest["wspd"],
+
+            "pres": latest["pres"],
+
+            "is_festival": is_festival,
+
+            "is_public_holiday":
+                is_public_holiday,
+
+            "festival_day":
+                festival_day,
+
+            "demand_lag_1":
+                latest["demand_lag_1"],
+
+            "demand_lag_48":
+                latest["demand_lag_48"],
+
+            "demand_lag_96":
+                latest["demand_lag_96"],
+
+            "demand_lag_336":
+                latest["demand_lag_336"],
+
+            "rolling_mean_48":
+                latest["rolling_mean_48"],
+
+            "rolling_mean_336":
+                latest["rolling_mean_336"]
+
+        }])
+
+
+        # -----------------------------
+        # AI baseline prediction
+        # -----------------------------
+
+        base_prediction = (
+            festival_model
+            .predict(input_data)[0]
+        )
+
+
+        # -----------------------------
+        # Scenario adjustment
+        # -----------------------------
+
+        total_people = (
+            people +
+            extra_people
+        )
+
+
+        people_factor = (
+            1 +
+            (
+                extra_people /
+                max(people, 1)
+            ) * 0.10
+        )
+
+
+        appliance_count = (
+
+            fan +
+            ac +
+            tv +
+            fridge +
+            pump +
+            geyser +
+            lights
+
+        )
+
+
+        appliance_factor = (
+
+            1 +
+            (
+                appliance_count *
+                usage_hours *
+                0.005
+            )
+
+        )
+
+
+        final_prediction = (
+
+            base_prediction *
+            people_factor *
+            appliance_factor
+
+        )
+
+
+        additional_demand = (
+
+            final_prediction -
+            base_prediction
+
+        )
+
+
+        # -----------------------------
+        # Return result
+        # -----------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "location": location,
+
+            "festival": festival,
+
+            "normal_people":
+                people,
+
+            "extra_people":
+                extra_people,
+
+            "total_people":
+                total_people,
+
+            "temperature":
+                temperature,
+
+            "ai_baseline_demand":
+                round(
+                    float(base_prediction),
+                    2
+                ),
+
+            "scenario_demand":
+                round(
+                    float(final_prediction),
+                    2
+                ),
+
+            "additional_demand":
+                round(
+                    float(additional_demand),
+                    2
+                ),
+
+            "note":
+                "Extra people and appliance values "
+                "are scenario inputs, not historical "
+                "migration data."
+
+        })
+
+
+    except Exception as e:
+
+        return jsonify({
+
+            "success": False,
 
             "error":
                 str(e)
 
         }), 400
-
-
 # ============================================================
 # ABNORMAL DETECTION PAGE
 # ============================================================
