@@ -2,3 +2,13 @@
 name = "smart-village-electricity-ai"
 version = "1.0.0"
 requires-python = "~=3.12.0"
+dependencies = [
+    "Flask==3.1.3",
+    "gunicorn==26.2.0",
+    "pandas==2.3.3",
+    "numpy==2.2.6",
+    "scikit-learn==1.7.2",
+    "joblib==1.6.0",
+    "requests==2.34.2",
+    "beautifulsoup4==4.15.0"
+]
